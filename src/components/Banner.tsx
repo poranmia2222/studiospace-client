@@ -1,3 +1,19 @@
+/**
+ * BANNER — the homepage hero section: promo copy, feature bullets, CTA
+ * buttons, ambient glows and the banner image slider on the right.
+ *
+ * Concepts:
+ * • Server Component (no "use client") — it has no state of its own; the
+ *   interactive part is HeroSlider, which is a client component. Mixing the
+ *   two this way is standard: static parts stay server-rendered.
+ * • Everything decorative lives in aria-hidden="true" containers (glows,
+ *   textures) so screen readers skip them.
+ * • Decorative layers (glows, textures, stat chips) are static; the only
+ *   continuous motion on the page is the hero slider. Everything else
+ *   reacts on hover. aria-hidden="true" keeps decorative layers out of
+ *   screen-reader output.
+ */
+
 import Link from "next/link";
 import { HeroSlider } from "@/components/hero-slider";
 
@@ -49,12 +65,9 @@ const Banner = () => {
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
           {/* Left: copy */}
           <div>
-            {/* Pulsing eyebrow badge */}
+            {/* Eyebrow badge (static dot — motion is limited to the hero slider) */}
             <div className="inline-flex items-center gap-2.5 rounded-full border border-violet-500/30 bg-violet-500/10 py-1.5 pl-2 pr-4">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-60" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
-              </span>
+              <span className="h-2.5 w-2.5 rounded-full bg-primary" />
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-300">
                 Peer-to-peer creative marketplace
               </span>
@@ -133,7 +146,7 @@ const Banner = () => {
           <div className="relative">
             <HeroSlider />
 
-            <div className="animate-float absolute -left-4 -top-4 hidden items-center gap-2.5 rounded-2xl border border-edge bg-surface/90 p-3 pr-4 shadow-xl shadow-black/40 backdrop-blur sm:flex">
+            <div className="absolute -left-4 -top-4 hidden items-center gap-2.5 rounded-2xl border border-edge bg-surface/90 p-3 pr-4 shadow-xl shadow-black/40 backdrop-blur sm:flex">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 text-sm text-white">
                 ✦
               </span>
@@ -143,7 +156,7 @@ const Banner = () => {
               </span>
             </div>
 
-            <div className="animate-float-delayed absolute -bottom-4 right-6 hidden items-center gap-2.5 rounded-2xl border border-edge bg-surface/90 p-3 pr-4 shadow-xl shadow-black/40 backdrop-blur sm:flex">
+            <div className="absolute -bottom-4 right-6 hidden items-center gap-2.5 rounded-2xl border border-edge bg-surface/90 p-3 pr-4 shadow-xl shadow-black/40 backdrop-blur sm:flex">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-sm text-white">
                 ★
               </span>

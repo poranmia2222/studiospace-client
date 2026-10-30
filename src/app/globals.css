@@ -1,18 +1,34 @@
+/* ============================================================
+   GLOBAL STYLES + DESIGN TOKENS for StudioSpace
+   ============================================================
+   Concepts:
+   • Tailwind v4 is "CSS-first": instead of a tailwind.config.js file,
+     we configure the design system right here with plain CSS.
+   • ":root" variables (--background, --primary...) are design tokens.
+     Change the value ONCE here and every component using classes like
+     `bg-primary` or `text-muted` updates everywhere — that's the point
+     of a design system.
+   • The "@theme inline" block tells Tailwind to expose those variables
+     as utility classes: --color-primary generates bg-primary,
+     text-primary, border-primary, and so on.
+   ============================================================ */
+
 @import "tailwindcss";
 
 /* ---------- Theme: StudioSpace dark creative (violet/fuchsia) ---------- */
 
 :root {
-  --background: #101016;
-  --foreground: #fafafa;
-  --muted: #b4b4c4;
-  --surface: #1b1b26;
-  --edge: #2c2c3a;
-  --primary: #8b5cf6;      /* violet-500 */
-  --primary-strong: #7c3aed;
+  --background: #101016;    /* page background (soft dark, not pure black) */
+  --foreground: #fafafa;    /* default text color                          */
+  --muted: #b4b4c4;         /* secondary/quiet text                        */
+  --surface: #1b1b26;       /* card backgrounds                            */
+  --edge: #2c2c3a;          /* card borders and dividers                   */
+  --primary: #8b5cf6;       /* violet-500 — brand accent                   */
+  --primary-strong: #7c3aed;/* darker violet for hover states              */
 }
 
 @theme inline {
+  /* Maps CSS variables above into Tailwind utility classes. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
@@ -20,62 +36,19 @@
   --color-edge: var(--edge);
   --color-primary: var(--primary);
   --color-primary-strong: var(--primary-strong);
+  /* Fonts: fed by next/font in src/app/layout.tsx. */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* Smooth in-page scrolling for navbar hash links (e.g. /#how-it-works).
+   data-scroll-behavior on <html> (layout.tsx) lets Next.js switch this off
+   during route transitions so pages appear at the top instantly. */
 html {
   scroll-behavior: smooth;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
-
-/* Step panel entrance (HowItWorks) */
-@keyframes step-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.animate-step-in {
-  animation: step-in 0.35s ease-out;
-}
-
-/* Banner floating stat chips */
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-.animate-float {
-  animation: float 5s ease-in-out infinite;
-}
-
-.animate-float-delayed {
-  animation: float 5s ease-in-out 1.2s infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-step-in,
-  .animate-float,
-  .animate-float-delayed {
-    animation: none;
-  }
-}
+/* ---------- Base body styles ---------- */
 
 body {
   background: var(--background);

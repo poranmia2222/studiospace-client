@@ -1,36 +1,37 @@
-import Link from "next/link";
-import Banner from "@/components/Banner";
-import HowItWorks from "@/components/HowItWorks";
+/**
+ * HOME PAGE (route "/")
+ *
+ * Concepts:
+ * • In the App Router, creating a folder under src/app + a page.tsx file
+ *   creates a route. src/app/page.tsx = the home page ("/").
+ * • This file is a Server Component (no "use client"): it runs only on the
+ *   server, ships zero JavaScript to the browser, and composes the
+ *   interactive pieces (Banner, HowItWorks) which ARE client components.
+ * • The page is a thin "composition layer" — each section lives in its own
+ *   component file so it stays easy to test, tweak and explain.
+ */
+
+import Banner from "@/components/Banner"; // hero + banner image slider
+import Categories from "@/components/Categories"; // studio category cards
+import HowItWorks from "@/components/HowItWorks"; // interactive journey tabs
+import AboutUs from "@/components/AboutUs"; // story, mission & features
 
 export default function Home() {
   return (
     <main className="flex-1">
-      {/* Hero / banner */}
+      {/* Hero / banner section (top of the homepage). */}
       <Banner />
 
-      {/* How It Works (interactive, in HowItWorks component) */}
+      {/* Studio categories — what kinds of spaces can be found here. */}
+      <Categories />
+
+      {/* "How it works" — renter vs host tabs + steps + CTA.
+          The id lets navbar links scroll straight here ("/#how-it-works"). */}
       <HowItWorks />
 
-      {/* About Us (scroll target: /#about-us) */}
-      <section id="about-us" className="scroll-mt-24 border-t border-edge">
-        <div className="mx-auto w-full max-w-6xl px-6 py-20">
-          <h2 className="text-3xl font-semibold tracking-tight">About Us</h2>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">
-            StudioSpace is built on a simple idea: the spaces where art happens
-            shouldn&apos;t sit empty while creatives search for somewhere to
-            work. We&apos;re a peer-to-peer platform that lets owners list their
-            workspaces and lets creatives book them directly — fair rates, real
-            conversations, full creative control.
-          </p>
-          <Link
-            href="/studios"
-            className="mt-8 inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-fuchsia-400"
-          >
-            Browse the studios
-            <span aria-hidden="true">→</span>
-          </Link>
-        </div>
-      </section>
+      {/* About Us (scroll target: /#about-us) — story, mission & vision,
+          and "Why choose StudioSpace" feature cards. */}
+      <AboutUs />
     </main>
   );
 }
