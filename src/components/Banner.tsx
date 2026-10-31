@@ -121,7 +121,7 @@ const Banner = () => {
                 href="/studios"
                 className="group flex h-12 items-center rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-600 px-8 text-base font-medium text-white shadow-xl shadow-violet-600/30 transition-all hover:shadow-violet-500/40 hover:brightness-110 active:scale-[.98]"
               >
-                Rent a Studio
+                Explore Studios
                 <span
                   aria-hidden="true"
                   className="ml-2 transition-transform group-hover:translate-x-0.5"
@@ -133,7 +133,7 @@ const Banner = () => {
                 href="/signup"
                 className="flex h-12 items-center rounded-full border border-edge bg-white/[.02] px-8 text-base font-medium text-foreground transition-colors hover:border-muted hover:bg-white/[.05]"
               >
-                Become a Host
+                Host Your Space
               </Link>
             </div>
 

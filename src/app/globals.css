@@ -48,6 +48,23 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Respect reduced-motion preferences: turn smooth scrolling off and let
+   CSS transitions/animations all but stop (hover effects in components
+   pair with Tailwind's motion-reduce:* utilities for the same reason). */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  ::before,
+  ::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 /* ---------- Base body styles ---------- */
 
 body {
