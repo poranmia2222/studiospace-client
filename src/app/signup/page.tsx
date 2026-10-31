@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signUp } from "@/lib/auth-client";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle signup submission logic
     const password = (e.target as HTMLFormElement).password.value;
@@ -28,7 +29,15 @@ export default function SignUpForm() {
 
     const formData = new FormData(e.currentTarget)
     const data = Object.fromEntries(formData.entries())
-    console.log(data)
+    
+    const {data:resData, error} = await signUp.email({
+      name: data.name as string,
+      image: data.url as string,
+      email: data.email as string,
+      password: data.password as string
+    })
+
+    console.log(resData)
 
   };
 
