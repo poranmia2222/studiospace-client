@@ -1,25 +1,3 @@
-/**
- * HOW IT WORKS — two sections:
- *   1. "Your Creative Journey Starts Here." — a rounded two-tab selector
- *      (For Creators / For Studio Owners) that switches a panel of four
- *      connected step cards, plus a CTA banner.
- *   2. "Create With Confidence." — four trust & support feature cards.
- *
- * Concepts:
- * • Tabs come from our shadcn/ui-style component (src/components/ui/tabs.tsx).
- *   It is a controlled component: the `active` state decides which tab is
- *   open, and tapping a tab calls onValueChange → React re-renders the other
- *   journey. Tab styling (ARIA roles, keyboard arrows, focus) is handled
- *   inside the ui/tabs wrapper — none of that lives here anymore.
- * • Steps layout is one <ol> that transforms by breakpoint:
- *   - mobile (<sm): vertical timeline (numbered dots on a dashed line)
- *   - tablet (sm–lg): 2-column card grid
- *   - desktop (lg+): 4-column card row with arrow connectors between cards
- * • Reduced motion: every hover animation pairs with motion-reduce:*
- *   utilities that turn it off for users with "reduce motion" enabled
- *   (globals.css also switches smooth scrolling off for them).
- */
-
 "use client";
 
 import Link from "next/link";

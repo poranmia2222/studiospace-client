@@ -1,19 +1,3 @@
-/**
- * BANNER — the homepage hero section: promo copy, feature bullets, CTA
- * buttons, ambient glows and the banner image slider on the right.
- *
- * Concepts:
- * • Server Component (no "use client") — it has no state of its own; the
- *   interactive part is HeroSlider, which is a client component. Mixing the
- *   two this way is standard: static parts stay server-rendered.
- * • Everything decorative lives in aria-hidden="true" containers (glows,
- *   textures) so screen readers skip them.
- * • Decorative layers (glows, textures, stat chips) are static; the only
- *   continuous motion on the page is the hero slider. Everything else
- *   reacts on hover. aria-hidden="true" keeps decorative layers out of
- *   screen-reader output.
- */
-
 import Link from "next/link";
 import { HeroSlider } from "@/components/hero-slider";
 

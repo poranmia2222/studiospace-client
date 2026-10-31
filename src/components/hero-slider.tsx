@@ -1,23 +1,3 @@
-/**
- * HERO SLIDER — the image carousel in the homepage banner.
- *
- * Concepts:
- * • State: useState(index) remembers which slide is showing. Changing state
- *   re-renders the component with the new value — that's React's core loop.
- * • Side effects: useEffect schedules a timer to auto-advance the slider.
- *   The cleanup function it returns clears the old timer on every re-run so
- *   we never stack multiple timers (a classic React beginner bug).
- * • next/image: the <Image> component optimizes images (correct sizing,
- *   lazy-loading, formats). `fill` makes the image stretch to its parent
- *   box; `priority` only on the FIRST slide, so later ones load eagerly
- *   only when needed.
- * • The "slider" itself is CSS: one flex row holding all slides side by
- *   side, shifted with translateX(-index * 100%) and animated by a CSS
- *   transition. No slider library needed.
- * • Mouse handlers (`onMouseEnter/Leave`) pause autoplay while the user is
- *   looking/interacting — a nice UX touch.
- */
-
 "use client";
 
 import Image from "next/image";

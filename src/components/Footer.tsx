@@ -1,25 +1,3 @@
-/**
- * FOOTER — site footer shown under every page (rendered in src/app/layout.tsx
- * usage below or appended per page).
- *
- * Concepts a recruiter might ask about:
- * • "use client": the newsletter form needs React state (useState) to remember
- *   what the visitor typed and whether they subscribed — state only works in
- *   client components. (Everything else on the page could stay a Server
- *   Component; only this file opts in.)
- * • Controlled input: the <input>'s value comes from state, and onChange
- *   writes every keystroke back — React state is the single source of truth.
- * • e.preventDefault() stops the browser's default "reload the page and send
- *   the form to a URL" behavior, letting React handle the submit instead.
- *   (A real product would POST the email to an API here — there is no
- *   backend yet, so we just show a confirmation message.)
- * • Social icons: this lucide-react version no longer ships brand logos, so
- *   each social mark is a tiny inline SVG below. The X logo is the official
- *   filled mark (NOT the old Twitter bird) — solid fill instead of strokes.
- * • Links to other sites use target="_blank" rel="noreferrer" so they open in
- *   a new tab without leaking the current page address.
- */
-
 "use client";
 
 import Link from "next/link";

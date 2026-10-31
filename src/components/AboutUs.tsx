@@ -1,26 +1,3 @@
-/**
- * ABOUT US — the "About Us" section on the homepage (scroll target:
- * "/#about-us", rendered by src/app/page.tsx).
- *
- * Concepts a recruiter might ask about:
- * • Server Component: no "use client" here because there is no state, no
- *   event handlers and no browser-only hooks — it runs only on the server
- *   and ships zero JavaScript to the browser.
- * • Content-driven rendering: the mission and feature cards come from
- *   plain arrays below, rendered with .map() — editing copy means editing
- *   one array, not JSX in multiple places.
- * • next/image: <Image> optimizes photos automatically. `fill` + a
- *   fixed-aspect parent box (`aspect-[4/3]`) crops the photo cleanly at
- *   any screen size (`object-cover`), and `sizes` tells the browser how
- *   big the image will be so it downloads a right-sized version.
- * • Responsive layout with Tailwind prefixes: `lg:grid-cols-2` means "two
- *   columns only from the lg breakpoint (1024px) up"; below that each
- *   block stacks into one readable column.
- * • One <section> with three inner blocks (Story / Mission / Features),
- *   separated by borders and alternating card-tinted backgrounds — the
- *   same rhythm the rest of the homepage uses.
- */
-
 import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 import { CalendarCheck, Eye, ImagePlus, Info, Search, Target } from "lucide-react";

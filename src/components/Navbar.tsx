@@ -1,18 +1,3 @@
-/**
- * NAVBAR — sticky site header shown on every page.
- *
- * Concepts:
- * • "use client" is required because this component needs interactivity:
- *   `usePathname()` (a React hook) runs in the browser to know the current
- *   URL so we can highlight the active link.
- * • Client-side navigation: <Link> (from next/link) swaps pages without a
- *   full browser reload — it's the standard way to navigate inside Next.js.
- * • Responsive design with Tailwind prefixes: utilities like `md:flex` /
- *   `hidden` mean "apply/only apply above the md breakpoint (768px)".
- * • Accessibility (a11y): `aria-current="page"` tells screen readers which
- *   nav link is the page you're on.
- */
-
 "use client";
 
 import Link from "next/link";

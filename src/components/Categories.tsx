@@ -1,19 +1,3 @@
-/**
- * CATEGORIES — homepage section listing the creative studio categories.
- * (Rendered between the banner and "How it works" on the homepage.)
- *
- * Concepts a recruiter might ask about:
- * • Server Component: no "use client" because there is no state or
- *   interactivity beyond links — it ships zero JavaScript to the browser.
- * • Content-driven rendering: the whole section is driven by the
- *   CATEGORIES array below; adding a category = adding one object.
- * • Whole-card links: each card is a single <Link> element, so the
- *   entire card is clickable/keyboard-focusable — screen readers hear
- *   the category name, and we don't need JS click handlers.
- * • Responsive grid with Tailwind prefixes:
- *   1 column (mobile) → 2 (sm/tablet) → 4 (lg/desktop).
- */
-
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
