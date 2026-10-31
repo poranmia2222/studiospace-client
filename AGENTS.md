@@ -12,7 +12,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Stack
 
-- Next.js **16** App Router + React 19 + TypeScript, code in `src/` (routes under `src/app`). UI-phase project: static marketing pages + the start of the marketplace UI. No tests, no CI.
+- Next.js **16** App Router + React 19 + TypeScript, code in `src/` (routes under `src/app`). UI-phase project: marketing pages + an API-backed marketplace (`/studios` grid with filters, `/studios/[id]` detail). No tests, no CI, no formatter.
 - Path alias: `@/*` → `src/*`; `cn()` utility in `@/lib/utils`.
 
 ## Tailwind v4
@@ -29,7 +29,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 `cacheComponents: true` + `partialPrefetching: true` — this changes how data and rendering work vs. the classic App Router model:
 
-- Async components and uncached data must be wrapped in a `<Suspense>` boundary, or the build fails the prerender check.
+- Async components and uncached data must be wrapped in a `<Suspense>` boundary, or the build fails the prerender check. Existing pages follow the pattern: an async `load*` helper that never throws → called from an async component rendered inside `<Suspense fallback={<Skeleton…/>}>` → errors surface as an inline card, not a crash.
+- `params` / `searchParams` are async Promises in Next 16 — await them, and read them inside the Suspense-wrapped section (see `src/app/studios/page.tsx` and `studios/[id]/page.tsx`).
 - Caching is done with the `use cache` directive (pair with `cacheLife`); `cacheComponents`-era APIs differ from `unstable_cache`/`revalidate` patterns in older code. `GET` route handlers follow the same prerendering model.
 - Reference guide: `node_modules/next/dist/docs/01-app/01-getting-started/08-caching.md`.
 
@@ -38,11 +39,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - `npm run dev` — Turbopack dev server (default in Next 16) on localhost:3000.
 - `npm run lint` — runs `eslint` (flat config in `eslint.config.mjs`, run from repo root).
 - No typecheck script; use `npx tsc --noEmit`. No test framework installed.
-- Build: `npm run build`. Generated route types live in `.next/dev/types/` (imported by `next-env.d.ts`); a dev server or build must have run for typed route helpers (`PageProps`, `LayoutProps` — used in `src/app/layout.tsx`) to resolve.
+- Build: `npm run build`. Generated route types live in `.next/dev/types/` (imported by `next-env.d.ts`); a dev server or build must have run for typed route helpers (`LayoutProps<"/">` in `src/app/layout.tsx`) to resolve.
 - Next 16 typed routes are on: `href` values in `<Link>` are type-checked against real routes, so a wrong path fails the build, not just the browser.
 
 ## Backend API
 
-- `.env` sets `NEXT_PUBLIC_API_URL=http://localhost:8000` — the separate backend this client fetches from (e.g. `GET /studios` in `src/app/studios/page.tsx` with `cache: "no-store"`).
-- Fetches are failure-tolerant by design: unreachable API surfaces an inline error card, not a crashed page. No API needed to run `npm run dev`, but `/studios` shows no data without it.
+- `.env` sets `NEXT_PUBLIC_API_URL=http://localhost:8000` — the separate backend this client fetches from (`GET /studios`, `GET /studios/{id}`, both `cache: "no-store"`).
+- Fetches are failure-tolerant by design: unreachable API surfaces an inline error card, not a crashed page. Response bodies are unwrapped tolerantly (`body.data ?? body.studio ?? body`) — keep both conventions when adding endpoints. No API needed to run `npm run dev`, but the studio routes show no data without it.
 - `next.config.ts` allows any HTTPS host in `remotePatterns` because studio photos come from backend-provided URLs hosted anywhere.
