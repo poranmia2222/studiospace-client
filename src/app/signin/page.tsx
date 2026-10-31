@@ -8,13 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signIn } from "@/lib/auth-client";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle login submission logic
+    const formData = new FormData(e.currentTarget)
+    const data = Object.fromEntries(formData.entries())
+    const { data: resData, error } = await signIn.email({
+      email: data.email as string,
+      password: data.password as string
+    })
+    console.log(resData)
   }
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#0b0512] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(168,85,247,0.25),rgba(255,255,255,0))] p-4 text-white">
@@ -43,6 +51,7 @@ export default function SignInForm() {
                 <Input
                   id="email"
                   type="email"
+                  name="email"
                   placeholder="name@example.com"
                   className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl h-11 transition-all"
                   required
@@ -69,6 +78,7 @@ export default function SignInForm() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  name="password"
                   className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl h-11 transition-all"
                   required
                 />

@@ -1,7 +1,23 @@
 "use client";
 
+import { useSession } from "@/lib/auth-client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 
 // No "#": hash links (like "/#about-us") scroll to a section on the home
 // page, so they never count as the "active route" below.
@@ -34,6 +50,10 @@ const Navbar = () => {
   // usePathname() returns the current URL path, e.g. "/" or "/studios".
   const pathname = usePathname();
 
+  const { data: session } = useSession()
+  const user = session?.user;
+  console.log(user)
+
   return (
     // sticky top-0 = header stays pinned while scrolling; z-50 keeps it above
     // other content; backdrop-blur = frosted-glass look over the page.
@@ -64,11 +84,10 @@ const Navbar = () => {
                 <Link
                   href={href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${
-                    isActive
-                      ? "bg-white/[.07] font-medium text-foreground"
-                      : "text-muted hover:bg-white/[.04] hover:text-foreground"
-                  }`}
+                  className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${isActive
+                    ? "bg-white/[.07] font-medium text-foreground"
+                    : "text-muted hover:bg-white/[.04] hover:text-foreground"
+                    }`}
                 >
                   {label}
                 </Link>
@@ -79,18 +98,41 @@ const Navbar = () => {
 
         {/* Right: auth actions (placeholder pages until real auth lands) */}
         <div className="flex items-center gap-2.5">
-          <Link
-            href="/signin"
-            className="hidden h-9 items-center rounded-full border border-edge px-4 text-sm font-medium text-foreground transition-colors hover:border-muted hover:bg-white/[.04] sm:flex"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/signup"
-            className="flex h-9 items-center rounded-full bg-primary px-4 text-sm font-medium text-white transition-colors hover:bg-primary-strong"
-          >
-            Sign Up
-          </Link>
+          {session ? <div className="flex items-center gap-3">
+            <p>{user?.name}</p>
+            <DropdownMenu>
+      <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full"><Avatar>
+          <AvatarImage src={user?.image as string} alt="shadcn" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar></Button>} />
+      <DropdownMenuContent className="w-32">
+        <DropdownMenuGroup>
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem>Billing</DropdownMenuItem>
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem><Button>Log out</Button></DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+          </div>
+            : <div>
+              <Link
+                href="/signin"
+                className="hidden h-9 items-center rounded-full border border-edge px-4 text-sm font-medium text-foreground transition-colors hover:border-muted hover:bg-white/[.04] sm:flex"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/signup"
+                className="flex h-9 items-center rounded-full bg-primary px-4 text-sm font-medium text-white transition-colors hover:bg-primary-strong"
+              >
+                Sign Up
+              </Link>
+            </div>
+          }
         </div>
       </nav>
     </header>
