@@ -22,25 +22,24 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
   const { data: session } = useSession()
   const user = session?.user;
 
-  const handleShare = async () => {
-    ;
+  const newBooking = {
+    name: user?.name,
+    email: user?.email,
+    ...studio,
+    date: new Date().toISOString()
+  }
 
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: studio.title,
-          url: window.location.href,
-        });
-        return;
-      }
-
-
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") {
-        return;
-      }
-    }
-  };
+  const handleAddToBooking = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newBooking)
+    })
+    const data = await res.json()
+    console.log(data)
+  }
 
   return (
     <article>
@@ -209,7 +208,7 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
             <Users className="h-4 w-4 text-primary" aria-hidden="true" />
             Up to {studio.capacity} people
           </div>
-          <Button size="lg" className="w-full">
+          <Button onClick={handleAddToBooking} size="lg" className="w-full">
             <CalendarPlus data-icon="inline-start" aria-hidden="true" />
             Book now
           </Button>
