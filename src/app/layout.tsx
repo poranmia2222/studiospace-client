@@ -19,6 +19,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 // The Atlanta-based Geist font pair (sans for UI, mono for code snippets).
@@ -58,6 +59,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         {/* One footer instance, rendered below every page. */}
         <Footer />
+        {/* Global toast outlet (sonner) — auth feedback renders here. */}
+        <Toaster richColors closeButton />
       </body>
     </html>
   );

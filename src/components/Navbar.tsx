@@ -1,8 +1,9 @@
 "use client";
 
-import { useSession } from "@/lib/auth-client";
+import { signOut, useSession } from "@/lib/auth-client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 import {
   Avatar,
   AvatarFallback,
@@ -54,6 +55,15 @@ const Navbar = () => {
   const user = session?.user;
   console.log(user)
 
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      toast.success("Signed out successfully.")
+    } catch {
+      toast.error("Failed to sign out. Please try again.")
+    }
+  }
+
   return (
     // sticky top-0 = header stays pinned while scrolling; z-50 keeps it above
     // other content; backdrop-blur = frosted-glass look over the page.
@@ -98,27 +108,35 @@ const Navbar = () => {
 
         {/* Right: auth actions (placeholder pages until real auth lands) */}
         <div className="flex items-center gap-2.5">
-          {session ? <div className="flex items-center gap-3">
-            <p>{user?.name}</p>
+          {session ? <div className="flex items-center gap-2.5">
+            <p className="hidden max-w-28 truncate text-sm font-medium sm:block">
+              {user?.name}
+            </p>
             <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full"><Avatar>
-          <AvatarImage src={user?.image as string} alt="shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar></Button>} />
-      <DropdownMenuContent className="w-32">
-        <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Billing</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem><Button>Log out</Button></DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+              <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full"><Avatar>
+                <AvatarImage src={user?.image as string} alt={user?.name ?? "Profile"} />
+                <AvatarFallback>{user?.name?.charAt(0).toUpperCase() ?? "U"}</AvatarFallback>
+              </Avatar></Button>} />
+              {/* align="end" anchors the menu's RIGHT edge to the avatar so it
+                  opens leftward instead of overflowing past the screen edge. */}
+              <DropdownMenuContent align="end" sideOffset={8} className="w-56 bg-surface border border-edge text-foreground">
+                <div className="flex flex-col gap-0.5 border-b border-edge px-2 pb-2 pt-2.5">
+                  <p className="truncate text-sm font-medium">{user?.name}</p>
+                  <p className="truncate text-xs text-muted">{user?.email}</p>
+                </div>
+                <DropdownMenuGroup className="">
+                  <DropdownMenuItem><Link href={'/add-new-studio'}>Add New Studio</Link></DropdownMenuItem>
+                  <DropdownMenuItem><Link href={'/my-studio-listing'}>My Studio Listings</Link></DropdownMenuItem>
+                  <DropdownMenuItem><Link href={'/my-bookings'}>My Bookings</Link></DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <Button className="" onClick={handleSignOut}>Log out</Button>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-            : <div>
+            : <div className="flex items-center gap-3">
               <Link
                 href="/signin"
                 className="hidden h-9 items-center rounded-full border border-edge px-4 text-sm font-medium text-foreground transition-colors hover:border-muted hover:bg-white/[.04] sm:flex"

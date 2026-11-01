@@ -5,10 +5,10 @@ import { useState } from "react";
 import {
   CalendarPlus,
   Camera,
-  Heart,
   MapPin,
-  Share2,
+  SquarePen,
   Star,
+  Trash2,
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,11 +18,8 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
   const photos = studio.images?.filter(Boolean) ?? [];
   const amenities = studio.amenities ?? [];
   const [selectedPhoto, setSelectedPhoto] = useState(0);
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [shareMessage, setShareMessage] = useState("");
 
-  const handleShare = async () => {
-    setShareMessage("");
+  const handleShare = async () => {;
 
     try {
       if (navigator.share) {
@@ -33,19 +30,11 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
         return;
       }
 
-      if (!navigator.clipboard) {
-        setShareMessage("Sharing isn't available in this browser.");
-        return;
-      }
-
-      await navigator.clipboard.writeText(window.location.href);
-      setShareMessage("Link copied to clipboard.");
+    
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
         return;
       }
-
-      setShareMessage("Unable to share this studio. Please copy the page URL.");
     }
   };
 
@@ -67,52 +56,55 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
           </h1>
         </div>
 
+        {/* Post-level actions: edit & delete the ENTIRE studio listing,
+            not an individual photo. */}
         <div className="flex shrink-0 items-center gap-2">
           <Button
             type="button"
             variant="outline"
             size="sm"
-            onClick={handleShare}
             className="border-edge bg-surface text-foreground hover:bg-white/[.07]"
           >
-            <Share2 data-icon="inline-start" aria-hidden="true" />
-            Share
+            <SquarePen data-icon="inline-start" aria-hidden="true" />
+            Edit
           </Button>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            aria-pressed={isWishlisted}
-            onClick={() => setIsWishlisted((current) => !current)}
-            className="border-edge bg-surface text-foreground hover:bg-white/[.07]"
+            className="border-rose-500/30 bg-surface text-rose-400 hover:bg-rose-500/10"
           >
-            <Heart
-              data-icon="inline-start"
-              className={isWishlisted ? "fill-rose-500 text-rose-500" : ""}
-              aria-hidden="true"
-            />
-            {isWishlisted ? "Wishlisted" : "Wishlist"}
+            <Trash2 data-icon="inline-start" aria-hidden="true" />
+            Delete
           </Button>
         </div>
       </header>
 
-      {shareMessage && (
-        <p className="mt-2 text-right text-xs text-muted" aria-live="polite">
-          {shareMessage}
-        </p>
-      )}
-
       <section aria-label="Studio photos" className="mt-6">
         <div className="relative aspect-[2.4/1] max-h-[440px] min-h-56 overflow-hidden rounded-2xl border border-edge bg-surface shadow-sm">
           {photos.length > 0 ? (
-            <Image
-              src={photos[selectedPhoto]}
-              alt={`Photo ${selectedPhoto + 1} of ${studio.title}`}
-              fill
-              priority
-              sizes="(max-width: 640px) 100vw, 896px"
-              className="object-cover"
-            />
+            <>
+              {/* Blurred copy of the same photo fills the letterboxed area so
+                  nothing is cropped away — the sharp layer shows the FULL
+                  photo (object-contain) instead of zooming in (object-cover). */}
+              <Image
+                src={photos[selectedPhoto]}
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 640px) 100vw, 896px"
+                aria-hidden="true"
+                className="scale-125 object-cover blur-2xl brightness-[.35]"
+              />
+              <Image
+                src={photos[selectedPhoto]}
+                alt={`Photo ${selectedPhoto + 1} of ${studio.title}`}
+                fill
+                priority
+                sizes="(max-width: 640px) 100vw, 896px"
+                className="object-contain"
+              />
+            </>
           ) : (
             <div className="flex h-full flex-col items-center justify-center gap-3 text-muted">
               <Camera className="h-10 w-10" strokeWidth={1.5} aria-hidden="true" />
