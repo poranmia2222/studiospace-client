@@ -16,6 +16,8 @@ export type Studio = {
   capacity: number;
   amenities: string[];
   images: string[];
+  name?: string;
+  email?: string;
 };
 
 /* Same hover treatment as the homepage cards (Categories / How It Works). */

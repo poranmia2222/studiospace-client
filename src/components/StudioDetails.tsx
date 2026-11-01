@@ -13,13 +13,17 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Studio } from "@/components/StudioCard";
+import { useSession } from "@/lib/auth-client";
 
 const StudioDetails = ({ studio }: { studio: Studio }) => {
   const photos = studio.images?.filter(Boolean) ?? [];
   const amenities = studio.amenities ?? [];
   const [selectedPhoto, setSelectedPhoto] = useState(0);
+  const { data: session } = useSession()
+  const user = session?.user;
 
-  const handleShare = async () => {;
+  const handleShare = async () => {
+    ;
 
     try {
       if (navigator.share) {
@@ -30,7 +34,7 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
         return;
       }
 
-    
+
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
         return;
@@ -59,24 +63,28 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
         {/* Post-level actions: edit & delete the ENTIRE studio listing,
             not an individual photo. */}
         <div className="flex shrink-0 items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="border-edge bg-surface text-foreground hover:bg-white/[.07]"
-          >
-            <SquarePen data-icon="inline-start" aria-hidden="true" />
-            Edit
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="border-rose-500/30 bg-surface text-rose-400 hover:bg-rose-500/10"
-          >
-            <Trash2 data-icon="inline-start" aria-hidden="true" />
-            Delete
-          </Button>
+          {(user?.email === studio?.email) ?
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="border-edge bg-surface text-foreground hover:bg-white/[.07]"
+              >
+                <SquarePen data-icon="inline-start" aria-hidden="true" />
+                Edit
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="border-rose-500/30 bg-surface text-rose-400 hover:bg-rose-500/10"
+              >
+                <Trash2 data-icon="inline-start" aria-hidden="true" />
+                Delete
+              </Button>
+            </div> : ""
+          }
         </div>
       </header>
 
@@ -128,11 +136,10 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
                 aria-label={`View photo ${index + 1} of ${studio.title}`}
                 aria-pressed={selectedPhoto === index}
                 onClick={() => setSelectedPhoto(index)}
-                className={`relative h-14 w-22 shrink-0 overflow-hidden rounded-lg border-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                  selectedPhoto === index
-                    ? "border-primary"
-                    : "border-transparent opacity-70 hover:opacity-100"
-                }`}
+                className={`relative h-14 w-22 shrink-0 overflow-hidden rounded-lg border-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selectedPhoto === index
+                  ? "border-primary"
+                  : "border-transparent opacity-70 hover:opacity-100"
+                  }`}
               >
                 <Image
                   src={src}

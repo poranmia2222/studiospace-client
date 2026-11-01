@@ -214,7 +214,7 @@ const StudiosSection = async ({
       {/* Card grid — 1 column (mobile) → 2 (tablet) → 3 (desktop) */}
       <ul className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((studio, index) => (
-          <li key={studio.id ?? `${studio.title}-${index}`} className="h-full">
+          <li key={studio._id ?? `${studio.title}-${index}`} className="h-full">
             <StudioCard studio={studio} />
           </li>
         ))}
