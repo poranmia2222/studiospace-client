@@ -1,21 +1,8 @@
-/* ============================================================
-   GLOBAL STYLES + DESIGN TOKENS for StudioSpace
-   ============================================================
-   Concepts:
-   • Tailwind v4 is "CSS-first": instead of a tailwind.config.js file,
-     we configure the design system right here with plain CSS.
-   • ":root" variables (--background, --primary...) are design tokens.
-     Change the value ONCE here and every component using classes like
-     `bg-primary` or `text-muted` updates everywhere — that's the point
-     of a design system.
-   • The "@theme inline" block tells Tailwind to expose those variables
-     as utility classes: --color-primary generates bg-primary,
-     text-primary, border-primary, and so on.
-   ============================================================ */
 
 @import "tailwindcss";
 
-/* ---------- Theme: StudioSpace dark creative (violet/fuchsia) ---------- */
+/* ---------- Theme: StudioSpace creative (violet/fuchsia),
+     dark by default, light via [data-theme="light"] ---------- */
 
 :root {
   --background: #101016;    /* page background (soft dark, not pure black) */
@@ -25,7 +12,40 @@
   --edge: #2c2c3a;          /* card borders and dividers                   */
   --primary: #8b5cf6;       /* violet-500 — brand accent                   */
   --primary-strong: #7c3aed;/* darker violet for hover states              */
+  /* Translucent "raised" fills (active pills, input fields, hovers) —
+     tinted with the FOREGROUND color per theme: white on dark, ink on
+     light. Replaces what used to be hardcoded bg-white/[.0x]. */
+  --overlay: rgb(255 255 255 / 0.07);
+  --overlay-soft: rgb(255 255 255 / 0.04);
+  /* Focus ring color (focus-visible:ring-ring in ui/button.tsx). */
+  --ring: #8b5cf6;
+
+  /* Native controls (scrollbars, form fills) follow the theme too. */
+  color-scheme: dark;
+
+  /* The dark palette is the default because it's set here and on <html>
+     in layout.tsx; next-themes swaps the attribute in before first paint
+     when the visitor picked light (see ThemeToggle). */
 }
+
+:root[data-theme="light"] {
+  --background: #f6f6fa;    /* near-white page background                  */
+  --foreground: #17171f;    /* ink text                                    */
+  --muted: #67677c;         /* slate secondary text                        */
+  --surface: #ffffff;       /* white cards                                 */
+  --edge: #e3e3ec;          /* light hairline borders                      */
+  --primary: #7c3aed;       /* violet-600 — keeps contrast on white        */
+  --primary-strong: #6d28d9;/* darker violet for hover states              */
+  --overlay: rgb(23 23 31 / 0.07);
+  --overlay-soft: rgb(23 23 31 / 0.04);
+  --ring: #7c3aed;
+  color-scheme: light;
+}
+
+/* Follow the app theme (html[data-theme]) for dark: utilities instead of
+   Tailwind's default OS-media query, so a dark-OS visitor seeing the
+   light theme doesn't get stray dark variant styles. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
   /* Maps CSS variables above into Tailwind utility classes. */
@@ -36,6 +56,9 @@
   --color-edge: var(--edge);
   --color-primary: var(--primary);
   --color-primary-strong: var(--primary-strong);
+  --color-overlay: var(--overlay);
+  --color-overlay-soft: var(--overlay-soft);
+  --color-ring: var(--ring);
   /* Fonts: fed by next/font in src/app/layout.tsx. */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

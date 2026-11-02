@@ -93,20 +93,32 @@ const DetailsSection = async ({ id }: { id: string }) => {
 
 /* ------------------------------ Page ------------------------------ */
 
-export default async function StudioDetailsPage({
+/**
+ * Awaits the params Promise *inside* the Suspense boundary — under Cache
+ * Components `params` is runtime data and reading it outside would block
+ * prerendering (same loader pattern as the /studios grid).
+ */
+const DetailsLoader = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const { id } = await params;
+  return <DetailsSection id={id} />;
+};
+
+export default function StudioDetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-
   return (
     <div className="mx-auto w-full max-w-5xl px-6 py-10 md:py-12">
-      {/* The no-store fetch is uncached data, so it streams inside Suspense:
+      {/* The no-store fetch AND the params read both happen inside Suspense:
           the route shell renders instantly and this section fills in while
           the request is in flight (same pattern as the /studios grid). */}
       <Suspense fallback={<DetailsSkeleton />}>
-        <DetailsSection id={id} />
+        <DetailsLoader params={params} />
       </Suspense>
     </div>
   );

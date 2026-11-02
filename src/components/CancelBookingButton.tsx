@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { cn } from "@/lib/utils";
 
 /**
@@ -54,25 +55,33 @@ const CancelBookingButton = ({
     }
   };
 
+  /**
+   * Opens a ConfirmDialog first — the DELETE request only fires once the
+   * user explicitly confirms.
+   */
   return (
-    <Button
-      type="button"
-      variant="outline"
-      disabled={pending || !bookingId}
-      onClick={handleCancel}
-      title={bookingId ? undefined : "This booking has no id — cannot cancel"}
-      className={cn(
-        "border-rose-500/30 bg-surface text-rose-400 hover:bg-rose-500/10",
-        className,
-      )}
-    >
-      {pending ? (
-        <Loader2 data-icon="inline-start" className="animate-spin" aria-hidden="true" />
-      ) : (
-        <Trash2 data-icon="inline-start" aria-hidden="true" />
-      )}
-      {pending ? "Cancelling…" : "Cancel booking"}
-    </Button>
+    <ConfirmDialog
+      trigger={
+        <Button
+          type="button"
+          variant="outline"
+          disabled={pending || !bookingId}
+          title={bookingId ? undefined : "This booking has no id — cannot cancel"}
+          className={cn(
+            "border-rose-500/30 bg-surface text-rose-400 hover:bg-rose-500/10",
+            className,
+          )}
+        >
+          <Trash2 data-icon="inline-start" aria-hidden="true" />
+          {pending ? "Cancelling…" : "Cancel booking"}
+        </Button>
+      }
+      title={title ? `Cancel booking for "${title}"?` : "Cancel this booking?"}
+      description="The booking will be removed from your reservations. This action cannot be undone."
+      confirmLabel="Cancel booking"
+      confirmingLabel="Cancelling…"
+      onConfirm={handleCancel}
+    />
   );
 };
 

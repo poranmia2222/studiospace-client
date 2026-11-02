@@ -102,7 +102,7 @@ export default function SignUpForm() {
                     type="text"
                     name="name"
                     placeholder="John Doe"
-                    className="h-11 rounded-xl border-edge bg-white/[.04] pl-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
+                    className="h-11 rounded-xl border-edge bg-overlay-soft pl-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
                     required
                   />
                 </div>
@@ -121,7 +121,7 @@ export default function SignUpForm() {
                     type="url"
                     name="url"
                     placeholder="https://example.com"
-                    className="h-11 rounded-xl border-edge bg-white/[.04] pl-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
+                    className="h-11 rounded-xl border-edge bg-overlay-soft pl-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
                     required
                   />
                 </div>
@@ -139,7 +139,7 @@ export default function SignUpForm() {
                     type="email"
                     name="email"
                     placeholder="name@example.com"
-                    className="h-11 rounded-xl border-edge bg-white/[.04] pl-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
+                    className="h-11 rounded-xl border-edge bg-overlay-soft pl-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
                     required
                   />
                 </div>
@@ -157,7 +157,7 @@ export default function SignUpForm() {
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="At least 8 characters"
-                    className="h-11 rounded-xl border-edge bg-white/[.04] pl-10 pr-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
+                    className="h-11 rounded-xl border-edge bg-overlay-soft pl-10 pr-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
                     required
                   />
                   <button

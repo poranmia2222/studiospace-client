@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { cn } from "@/lib/utils";
 
 /**
@@ -50,26 +51,34 @@ const DeleteStudioButton = ({
     }
   };
 
+  /**
+   * Opens a ConfirmDialog first — the DELETE request only fires once the
+   * user explicitly confirms.
+   */
   return (
-    <Button
-      type="button"
-      variant="outline"
-      size="sm"
-      disabled={pending || !studioId}
-      onClick={handleDelete}
-      title={studioId ? undefined : "This studio has no id — cannot delete"}
-      className={cn(
-        "border-rose-500/30 bg-surface text-rose-400 hover:bg-rose-500/10",
-        className,
-      )}
-    >
-      {pending ? (
-        <Loader2 data-icon="inline-start" className="animate-spin" aria-hidden="true" />
-      ) : (
-        <Trash2 data-icon="inline-start" aria-hidden="true" />
-      )}
-      {pending ? "Deleting…" : "Delete"}
-    </Button>
+    <ConfirmDialog
+      trigger={
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={pending || !studioId}
+          title={studioId ? undefined : "This studio has no id — cannot delete"}
+          className={cn(
+            "border-rose-500/30 bg-surface text-rose-400 hover:bg-rose-500/10",
+            className,
+          )}
+        >
+          <Trash2 data-icon="inline-start" aria-hidden="true" />
+          {pending ? "Deleting…" : "Delete"}
+        </Button>
+      }
+      title={title ? `Delete "${title}"?` : "Delete this studio?"}
+      description="This permanently removes the studio listing and its photos. This action cannot be undone."
+      confirmLabel="Delete studio"
+      confirmingLabel="Deleting…"
+      onConfirm={handleDelete}
+    />
   );
 };
 

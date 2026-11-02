@@ -9,6 +9,7 @@ export type Studio = {
   _id?: string;
   title: string;
   category: string;
+  status: string;
   description: string;
   location: string;
   hourlyRate: number;
@@ -18,6 +19,12 @@ export type Studio = {
   images: string[];
   name?: string;
   email?: string;
+  emailId?: string;
+  /* Optional owner-set availability (set on the edit form, posted as
+     plain strings; guests pick a slot on the studio page). */
+  availabilityDate?: string; // "YYYY-MM-DD"
+  startTime?: string;        // "HH:MM"
+  endTime?: string;          // "HH:MM"
 };
 
 /* Same hover treatment as the homepage cards (Categories / How It Works). */
@@ -118,7 +125,7 @@ const StudioCard = ({
             {amenities.map((amenity) => (
               <li
                 key={amenity}
-                className="rounded-full border border-edge bg-white/[.03] px-2.5 py-1 text-xs text-muted"
+                className="rounded-full border border-edge bg-overlay-soft px-2.5 py-1 text-xs text-muted"
               >
                 {amenity}
               </li>

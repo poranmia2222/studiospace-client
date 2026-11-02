@@ -32,7 +32,7 @@ const CATEGORIES = [
 
 /* Shared field styling — same treatment as the auth forms. */
 const FIELD =
-    "h-11 rounded-xl border-edge bg-white/[.04] text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all";
+    "h-11 rounded-xl border-edge bg-overlay-soft text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all";
 const LABEL = "text-muted text-xs font-medium";
 
 const AddNewStudio = () => {
@@ -111,7 +111,7 @@ const AddNewStudio = () => {
             }
 
             toast.success("Studio added successfully!");
-            router.push('/studios')
+            router.push('/my-studio-listing')
 
         } catch {
             toast.error("Couldn't reach the server. Check your connection.");
@@ -219,7 +219,7 @@ const AddNewStudio = () => {
                                 name="description"
                                 rows={4}
                                 placeholder="A bright photography space for portraits, product photography, and creative shoots."
-                                className="w-full rounded-xl border border-edge bg-white/[.04] px-3.5 py-3 text-foreground placeholder:text-muted outline-none focus-visible:border-violet-500 focus-visible:ring-3 focus-visible:ring-violet-500/20 transition-all resize-y"
+                                className="w-full rounded-xl border border-edge bg-overlay-soft px-3.5 py-3 text-foreground placeholder:text-muted outline-none focus-visible:border-violet-500 focus-visible:ring-3 focus-visible:ring-violet-500/20 transition-all resize-y"
                                 required
                             />
                         </div>
@@ -309,7 +309,7 @@ const AddNewStudio = () => {
                                 {amenities.map((amenity) => (
                                     <li
                                         key={amenity}
-                                        className="flex items-center gap-1.5 rounded-full border border-edge bg-white/[.03] px-2.5 py-1 text-xs text-muted"
+                                        className="flex items-center gap-1.5 rounded-full border border-edge bg-overlay-soft px-2.5 py-1 text-xs text-muted"
                                     >
                                         {amenity}
                                         <button

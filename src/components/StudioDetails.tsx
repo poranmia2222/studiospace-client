@@ -5,18 +5,29 @@ import { useState } from "react";
 import {
   CalendarPlus,
   Camera,
+  ChevronLeft,
+  ChevronRight,
   Loader2,
   MapPin,
+  SquarePen,
   Star,
   Trash2,
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import EditStudioDialog from "@/components/EditStudioDialog";
+import { Label } from "@/components/ui/label";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import type { Studio } from "@/components/StudioCard";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+type Status = "pending" | "Confirmed" | "Cancelled" | "Completed";
+
+/* Booking-slot inputs — same field treatment as the auth/edit forms. */
+const SLOT_FIELD =
+  "h-11 w-full rounded-xl border border-edge bg-overlay-soft px-3 text-sm text-foreground outline-none focus-visible:border-violet-500 focus-visible:ring-3 focus-visible:ring-violet-500/20 transition-all";
 
 const StudioDetails = ({ studio }: { studio: Studio }) => {
   const router = useRouter()
@@ -25,13 +36,43 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
   const [selectedPhoto, setSelectedPhoto] = useState(0);
   const [pending, setPending] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  // Booking slot the guest picks: plain strings from the native date/time
+  // inputs — "YYYY-MM-DD" and "HH:MM". The time fields pre-fill from the
+  // owner's availability window (if they set one on the edit form).
+  const [selectedDate, setSelectedDate] = useState("");
+  const [startTime, setStartTime] = useState(studio.startTime ?? "");
+  const [endTime, setEndTime] = useState(studio.endTime ?? "");
   const { data: session } = useSession()
   const user = session?.user;
+
+  // Earliest selectable day in the date picker: the owner's availability
+  // date when set, otherwise local "today" ("en-CA" gives YYYY-MM-DD).
+  const minDate = studio.availabilityDate || new Date().toLocaleDateString("en-CA");
+
+  // Photo carousel navigation — arrows change one photo at a time and
+  // disable at either end (same behavior as FeaturedCarousel).
+  const showPrevPhoto = () =>
+    setSelectedPhoto((index) => Math.max(0, index - 1));
+  const showNextPhoto = () =>
+    setSelectedPhoto((index) => Math.min(photos.length - 1, index + 1));
+
 
 
   const handleAddToBooking = async () => {
     if (!user?.email) {
       toast.error("Please sign in to book a studio.");
+      router.push("/signin");
+      return;
+    }
+
+    // The slot is part of the booking — it must be complete and sane
+    // ("HH:MM" strings compare correctly as plain text).
+    if (!selectedDate || !startTime || !endTime) {
+      toast.error("Please pick a date along with start and end times.");
+      return;
+    }
+    if (endTime <= startTime) {
+      toast.error("End time must be after the start time.");
       return;
     }
 
@@ -59,13 +100,23 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
           toast.warning("This studio is already in your bookings.");
           return;
         }
+
       }
+      const { _id, ...studioData } = studio;
 
       const newBooking = {
         name: user.name,
-        email: user.email,
-        ...studio,
-        date: new Date().toISOString(),
+        emailId: user.email,
+        ...studioData,
+        // New bookings always start unpaid/unconfirmed — declare AFTER the
+        // spread so the studio's own `status` field can't overwrite it.
+        status: "pending" as Status,
+        // The guest's chosen slot, posted as plain strings ("YYYY-MM-DD" /
+        // "HH:MM"). `date` keeps its old field name so My Bookings keeps
+        // rendering (BookingCard formats it via new Date()).
+        date: selectedDate,
+        startTime,
+        endTime,
       };
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
@@ -75,10 +126,16 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
         },
         body: JSON.stringify(newBooking),
       });
+      const data = await res.json();
+      console.log(data)
+      if (res.status === 409) {
+        toast.error("This studio is already booked for the selected time.");
+        return;
+      }
 
       if (!res.ok) {
         toast.error(
-          `The booking service responded with an error (${res.status}). Please try again.`,
+          `The booking service responded with an error (${res.status}). Please try again.`
         );
         return;
       }
@@ -86,6 +143,10 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
       toast.success(
         `${studio.title} booked! It's now in your My Bookings list.`,
       );
+      // Clear the picked slot so the panel is ready for the next booking.
+      setSelectedDate("");
+      setStartTime("");
+      setEndTime("");
     } catch {
       // Network error, API not running, invalid JSON...
       toast.error("We couldn't reach the booking service. Please try again.");
@@ -151,72 +212,129 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
         <div className="flex shrink-0 items-center gap-2">
           {(user?.email === studio?.email) ?
             <div className="flex gap-3">
-              <EditStudioDialog studio={studio} />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleDetele}
-                disabled={isDeleting || !studio._id}
-                title={
-                  studio._id
-                    ? undefined
-                    : "This studio has no id — cannot delete"
+              <Link href={`/studios/edit/${studio._id}`}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="border-edge bg-surface text-foreground hover:bg-overlay"
+                >
+                  <SquarePen data-icon="inline-start" aria-hidden="true" />
+                  Edit
+                </Button></Link>
+              <ConfirmDialog
+                trigger={
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isDeleting || !studio._id}
+                    title={
+                      studio._id
+                        ? undefined
+                        : "This studio has no id — cannot delete"
+                    }
+                    className="border-rose-500/30 bg-surface text-rose-400 hover:bg-rose-500/10"
+                  >
+                    <Trash2 data-icon="inline-start" aria-hidden="true" />
+                    Delete
+                  </Button>
                 }
-                className="border-rose-500/30 bg-surface text-rose-400 hover:bg-rose-500/10"
-              >
-                {isDeleting ? (
-                  <Loader2
-                    data-icon="inline-start"
-                    className="animate-spin"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <Trash2 data-icon="inline-start" aria-hidden="true" />
-                )}
-                {isDeleting ? "Deleting…" : "Delete"}
-              </Button>
+                title={`Delete "${studio.title}"?`}
+                description="This permanently removes the studio listing and its photos. This action cannot be undone."
+                confirmLabel="Delete studio"
+                confirmingLabel="Deleting…"
+                onConfirm={handleDetele}
+              />
             </div> : ""
           }
         </div>
       </header>
 
       <section aria-label="Studio photos" className="mt-6">
-        <div className="relative aspect-[2.4/1] max-h-[440px] min-h-56 overflow-hidden rounded-2xl border border-edge bg-surface shadow-sm">
-          {photos.length > 0 ? (
-            <>
-              {/* Blurred copy of the same photo fills the letterboxed area so
-                  nothing is cropped away — the sharp layer shows the FULL
-                  photo (object-contain) instead of zooming in (object-cover). */}
-              <Image
-                src={photos[selectedPhoto]}
-                alt=""
-                fill
-                priority
-                sizes="(max-width: 640px) 100vw, 896px"
-                aria-hidden="true"
-                className="scale-125 object-cover blur-2xl brightness-[.35]"
-              />
-              <Image
-                src={photos[selectedPhoto]}
-                alt={`Photo ${selectedPhoto + 1} of ${studio.title}`}
-                fill
-                priority
-                sizes="(max-width: 640px) 100vw, 896px"
-                className="object-contain"
-              />
-            </>
-          ) : (
-            <div className="flex h-full flex-col items-center justify-center gap-3 text-muted">
-              <Camera className="h-10 w-10" strokeWidth={1.5} aria-hidden="true" />
-              <span className="text-sm">Photos coming soon</span>
-            </div>
-          )}
+        {/* Carousel region: arrow keys work while it holds focus (tabIndex).
+            Arrows sit on the wrapper so the image's overflow-hidden can't
+            clip their overhanging halves. */}
+        <div
+          role="region"
+          aria-roledescription="carousel"
+          aria-label={`Photos of ${studio.title}`}
+          tabIndex={0}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") {
+              event.preventDefault();
+              showPrevPhoto();
+            } else if (event.key === "ArrowRight") {
+              event.preventDefault();
+              showNextPhoto();
+            }
+          }}
+          className="relative rounded-2xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          <div className="relative aspect-[2.4/1] max-h-[440px] min-h-56 overflow-hidden rounded-2xl border border-edge bg-surface shadow-sm">
+            {photos.length > 0 ? (
+              <>
+                {/* Blurred copy of the same photo fills the letterboxed area so
+                    nothing is cropped away — the sharp layer shows the FULL
+                    photo (object-contain) instead of zooming in (object-cover). */}
+                <Image
+                  key={photos[selectedPhoto]}
+                  src={photos[selectedPhoto]}
+                  alt=""
+                  fill
+                  priority={selectedPhoto === 0}
+                  sizes="(max-width: 640px) 100vw, 896px"
+                  aria-hidden="true"
+                  className="scale-125 object-cover blur-2xl brightness-[.35]"
+                />
+                <Image
+                  key={photos[selectedPhoto]}
+                  src={photos[selectedPhoto]}
+                  alt={`Photo ${selectedPhoto + 1} of ${studio.title}`}
+                  fill
+                  priority={selectedPhoto === 0}
+                  sizes="(max-width: 640px) 100vw, 896px"
+                  className="object-contain"
+                />
+              </>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center gap-3 text-muted">
+                <Camera className="h-10 w-10" strokeWidth={1.5} aria-hidden="true" />
+                <span className="text-sm">Photos coming soon</span>
+              </div>
+            )}
 
-          {photos.length > 0 && (
-            <span className="absolute bottom-3 right-3 rounded-md bg-black/75 px-2.5 py-1 text-xs font-medium text-white">
-              Photo {selectedPhoto + 1} of {photos.length}
-            </span>
+            {photos.length > 0 && (
+              <span
+                aria-live="polite"
+                className="absolute bottom-3 right-3 rounded-md bg-black/75 px-2.5 py-1 text-xs font-medium text-white"
+              >
+                Photo {selectedPhoto + 1} of {photos.length}
+              </span>
+            )}
+          </div>
+
+          {photos.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={showPrevPhoto}
+                disabled={selectedPhoto === 0}
+                aria-label="Previous photo"
+                className="absolute top-1/2 left-3 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-surface text-foreground shadow-md transition-[opacity,background-color] hover:bg-overlay disabled:pointer-events-none disabled:opacity-0"
+              >
+                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={showNextPhoto}
+                disabled={selectedPhoto === photos.length - 1}
+                aria-label="Next photo"
+                className="absolute top-1/2 right-3 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-surface text-foreground shadow-md transition-[opacity,background-color] hover:bg-overlay disabled:pointer-events-none disabled:opacity-0"
+              >
+                <ChevronRight className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </>
           )}
         </div>
 
@@ -226,8 +344,20 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
               <button
                 key={`${src}-${index}`}
                 type="button"
+                ref={(el) => {
+                  // Keep the active thumbnail visible in the scroll row
+                  // (no-ops when already on-screen) so arrow navigation
+                  // doesn't step off the visible strip.
+                  if (selectedPhoto === index) {
+                    el?.scrollIntoView({
+                      block: "nearest",
+                      inline: "nearest",
+                      behavior: "smooth",
+                    });
+                  }
+                }}
                 aria-label={`View photo ${index + 1} of ${studio.title}`}
-                aria-pressed={selectedPhoto === index}
+                aria-current={selectedPhoto === index}
                 onClick={() => setSelectedPhoto(index)}
                 className={`relative h-14 w-22 shrink-0 overflow-hidden rounded-lg border-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selectedPhoto === index
                   ? "border-primary"
@@ -302,6 +432,57 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
             <Users className="h-4 w-4 text-primary" aria-hidden="true" />
             Up to {studio.capacity} people
           </div>
+
+          {/* Booking slot: date + start/end times, required before booking
+              (native pickers; the min keeps past days unselectable). */}
+          <fieldset
+            aria-label="Booking slot"
+            className="grid gap-2.5 pb-4"
+          >
+            <div className="space-y-1.5">
+              <Label htmlFor="booking-date" className="text-xs font-medium text-muted">
+                Select Date
+              </Label>
+              <input
+                id="booking-date"
+                type="date"
+                min={minDate}
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                aria-required="true"
+                className={SLOT_FIELD}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="space-y-1.5">
+                <Label htmlFor="booking-start" className="text-xs font-medium text-muted">
+                  Start Time
+                </Label>
+                <input
+                  id="booking-start"
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  aria-required="true"
+                  className={SLOT_FIELD}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="booking-end" className="text-xs font-medium text-muted">
+                  End Time
+                </Label>
+                <input
+                  id="booking-end"
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  aria-required="true"
+                  className={SLOT_FIELD}
+                />
+              </div>
+            </div>
+          </fieldset>
+
           <Button
             type="button"
             onClick={handleAddToBooking}
@@ -318,7 +499,7 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
             ) : (
               <CalendarPlus data-icon="inline-start" aria-hidden="true" />
             )}
-            {pending ? "Booking…" : "Book now"}
+            {pending ? "Booking…" : "Book Workspace Now"}
           </Button>
           <p className="mt-2 text-center text-xs text-muted">
             Booking &amp; payments are coming soon.
@@ -345,7 +526,7 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
               {amenities.map((amenity) => (
                 <li
                   key={amenity}
-                  className="rounded-full border border-edge bg-white/[.03] px-3 py-1.5 text-xs text-muted"
+                  className="rounded-full border border-edge bg-overlay-soft px-3 py-1.5 text-xs text-muted"
                 >
                   {amenity}
                 </li>

@@ -9,12 +9,12 @@ import BookingCard, { type Booking } from "@/components/BookingCard";
 type LoadResult = { bookings: Booking[]; error?: string; email?: string };
 
 /** Fetch + normalize the bookings list; never throws, never crashes. */
-const loadBookings = async (email?: string): Promise<LoadResult> => {
-  if (!email) return { bookings: [], error: "auth" };
+const loadBookings = async (emailId?: string): Promise<LoadResult> => {
+  if (!emailId) return { bookings: [], error: "auth" };
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${email}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${emailId}`,
       { cache: "no-store" }, // always fresh
     );
 

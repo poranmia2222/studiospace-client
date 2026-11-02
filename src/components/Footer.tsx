@@ -200,7 +200,7 @@ const Footer = () => {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={`StudioSpace on ${label}`}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-edge bg-white/[.02] text-muted transition-colors hover:border-muted hover:bg-white/[.05] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-edge bg-overlay-soft text-muted transition-colors hover:border-muted hover:bg-overlay hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
                 >
                   <Icon className="h-4 w-4" />
                 </a>

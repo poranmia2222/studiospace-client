@@ -1,5 +1,6 @@
 "use client";
 
+import React, { Suspense } from "react";
 import { signOut, useSession } from "@/lib/auth-client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -10,6 +11,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import ThemeToggle from "@/components/ThemeToggle"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,10 +49,44 @@ export function LogoMark() {
   );
 }
 
-const Navbar = () => {
-  // usePathname() returns the current URL path, e.g. "/" or "/studios".
+/**
+ * Center nav links: read usePathname() to highlight the current route.
+ * Extracted so the hook call sits inside a <Suspense> boundary (the hook
+ * only matters after hydration — the shell doesn't need it to prerender).
+ */
+const NavLinks = () => {
   const pathname = usePathname();
 
+  return (
+    <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
+      {NAV_LINKS.map(({ label, href }) => {
+        // Active-state logic: hash links are never "active"; for normal
+        // links, "/" only matches the homepage exactly, other routes can
+        // match by prefix.
+        const isHashLink = href.includes("#");
+        const isActive = !isHashLink &&
+          (href === "/" ? pathname === "/" : pathname.startsWith(href));
+
+        return (
+          <li key={href}>
+            <Link
+              href={href}
+              aria-current={isActive ? "page" : undefined}
+              className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${isActive
+                ? "bg-overlay font-medium text-foreground"
+                : "text-muted hover:bg-overlay-soft hover:text-foreground"
+                }`}
+            >
+              {label}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+const Navbar = () => {
   const { data: session } = useSession()
   const user = session?.user;
   // console.log(user)
@@ -79,35 +115,24 @@ const Navbar = () => {
           </span>
         </Link>
 
-        {/* Center: nav links (hidden on small screens — mobile menu TODO) */}
-        <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
-          {NAV_LINKS.map(({ label, href }) => {
-            // Active-state logic: hash links are never "active"; for normal
-            // links, "/" only matches the homepage exactly, other routes can
-            // match by prefix.
-            const isHashLink = href.includes("#");
-            const isActive = !isHashLink &&
-              (href === "/" ? pathname === "/" : pathname.startsWith(href));
+        {/* Center: nav links (hidden on small screens — mobile menu TODO).
+            usePathname() is runtime data under Cache Components, so the
+            active-link computation lives in a subcomponent streamed inside
+            Suspense; the header shell prerenders with plain links. */}
+        <Suspense
+          fallback={
+            <nav aria-label="Navigation (loading)" hidden>
+              {/* Hidden placeholder: same links, no active-route logic,
+                  reserves the header's height while the real ones stream. */}
+            </nav>
+          }
+        >
+          <NavLinks />
+        </Suspense>
 
-            return (
-              <li key={href}>
-                <Link
-                  href={href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${isActive
-                    ? "bg-white/[.07] font-medium text-foreground"
-                    : "text-muted hover:bg-white/[.04] hover:text-foreground"
-                    }`}
-                >
-                  {label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-
-        {/* Right: auth actions (placeholder pages until real auth lands) */}
+        {/* Right: theme toggle + auth actions (placeholder pages until real auth lands) */}
         <div className="flex items-center gap-2.5">
+          <ThemeToggle />
           {session ? <div className="flex items-center gap-2.5">
             <p className="hidden max-w-28 truncate text-sm font-medium sm:block">
               {user?.name}
@@ -139,7 +164,7 @@ const Navbar = () => {
             : <div className="flex items-center gap-3">
               <Link
                 href="/signin"
-                className="hidden h-9 items-center rounded-full border border-edge px-4 text-sm font-medium text-foreground transition-colors hover:border-muted hover:bg-white/[.04] sm:flex"
+                className="hidden h-9 items-center rounded-full border border-edge px-4 text-sm font-medium text-foreground transition-colors hover:border-muted hover:bg-overlay-soft sm:flex"
               >
                 Sign In
               </Link>

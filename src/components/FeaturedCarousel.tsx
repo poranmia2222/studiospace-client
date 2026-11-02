@@ -60,7 +60,7 @@ const FeaturedCarousel = ({ studios }: { studios: Studio[] }) => {
         onClick={() => scrollByCard(-1)}
         disabled={!canPrev}
         aria-label="Previous studios"
-        className="absolute top-1/2 left-0 z-10 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-surface text-foreground shadow-md transition-[opacity,background-color] hover:bg-white/[.07] disabled:pointer-events-none disabled:opacity-0"
+        className="absolute top-1/2 left-0 z-10 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-surface text-foreground shadow-md transition-[opacity,background-color] hover:bg-overlay disabled:pointer-events-none disabled:opacity-0"
       >
         <ChevronLeft className="h-5 w-5" aria-hidden="true" />
       </button>
@@ -69,7 +69,7 @@ const FeaturedCarousel = ({ studios }: { studios: Studio[] }) => {
         onClick={() => scrollByCard(1)}
         disabled={!canNext}
         aria-label="Next studios"
-        className="absolute top-1/2 right-0 z-10 flex h-9 w-9 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-surface text-foreground shadow-md transition-[opacity,background-color] hover:bg-white/[.07] disabled:pointer-events-none disabled:opacity-0"
+        className="absolute top-1/2 right-0 z-10 flex h-9 w-9 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-surface text-foreground shadow-md transition-[opacity,background-color] hover:bg-overlay disabled:pointer-events-none disabled:opacity-0"
       >
         <ChevronRight className="h-5 w-5" aria-hidden="true" />
       </button>

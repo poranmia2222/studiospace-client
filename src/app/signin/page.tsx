@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 
@@ -13,7 +13,13 @@ import { LogoMark } from "@/components/Navbar";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SignInForm() {
+/**
+ * The actual form lives in an inner component because it reads
+ * useSearchParams() — under Cache Components that hook must render
+ * inside a <Suspense> boundary, so the boundary wraps it below while
+ * the shell (glows + card) stays prerenderable.
+ */
+const SignInFormContent = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter()
   const searchParams = useSearchParams();
@@ -83,7 +89,7 @@ export default function SignInForm() {
                     type="email"
                     name="email"
                     placeholder="name@example.com"
-                    className="h-11 rounded-xl border-edge bg-white/[.04] pl-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
+                    className="h-11 rounded-xl border-edge bg-overlay-soft pl-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
                     required
                   />
                 </div>
@@ -109,7 +115,7 @@ export default function SignInForm() {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     name="password"
-                    className="h-11 rounded-xl border-edge bg-white/[.04] pl-10 pr-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
+                    className="h-11 rounded-xl border-edge bg-overlay-soft pl-10 pr-10 text-foreground placeholder:text-muted focus-visible:border-violet-500 focus-visible:ring-violet-500/20 transition-all"
                     required
                   />
                   <button
@@ -145,5 +151,13 @@ export default function SignInForm() {
         </Card>
       </div>
     </div>
+  );
+};
+
+export default function SignInForm() {
+  return (
+    <Suspense fallback={null}>
+      <SignInFormContent />
+    </Suspense>
   );
 }

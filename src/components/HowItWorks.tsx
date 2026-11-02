@@ -344,7 +344,7 @@ const HowItWorks = () => {
                 </Link>
                 <Link
                   href="/add-studio"
-                  className="flex h-12 items-center rounded-full border border-edge bg-white/[.02] px-8 text-base font-medium text-foreground transition-colors hover:border-muted hover:bg-white/[.05] motion-reduce:transition-none"
+                  className="flex h-12 items-center rounded-full border border-edge bg-overlay-soft px-8 text-base font-medium text-foreground transition-colors hover:border-muted hover:bg-overlay motion-reduce:transition-none"
                 >
                   List Your Studio
                 </Link>

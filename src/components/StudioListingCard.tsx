@@ -1,9 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Camera, MapPin, Star } from "lucide-react";
+import { ArrowRight, Camera, MapPin, SquarePen, Star } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import DeleteStudioButton from "@/components/DeleteStudioButton";
-import EditStudioDialog from "@/components/EditStudioDialog";
 import type { Studio } from "@/components/StudioCard";
 import { cn } from "@/lib/utils";
 
@@ -69,7 +68,18 @@ const StudioListingCard = ({ studio, className }: { studio: Studio; className?: 
           </p>
 
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <EditStudioDialog studio={studio} />
+            {/* Edit now lives on its own page (the dialog was removed) */}
+            <Link
+              href={`/studios/edit/${studio._id}`}
+              className={buttonVariants({
+                variant: "outline",
+                size: "sm",
+                className: "border-edge bg-surface text-foreground hover:bg-overlay",
+              })}
+            >
+              <SquarePen data-icon="inline-start" aria-hidden="true" />
+              Edit
+            </Link>
             <DeleteStudioButton studioId={studio._id} title={studio.title} />
             <Link href={`/studios/${studio._id}`} className={buttonVariants()}>
               View details

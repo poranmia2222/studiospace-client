@@ -19,6 +19,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ThemeProvider from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -50,15 +51,24 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       // CSS smooth-scrolling when navigating between routes (so pages
       // appear at the top instantly instead of gliding down the page).
       data-scroll-behavior="smooth"
+      // data-theme="dark" is the SSR default (globals.css keys its palette
+      // off it); suppressHydrationWarning silences the expected mismatch
+      // when next-themes corrects the attribute for a returning visitor.
+      data-theme="dark"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {/* One navbar instance, rendered above every page. */}
-        <Navbar />
-        {/* Each route's page.tsx renders in place of this variable. */}
-        {children}
-        {/* One footer instance, rendered below every page. */}
-        <Footer />
+        {/* next-themes provider — swaps data-theme before first paint and
+            persists the theme toggle choice in localStorage. */}
+        <ThemeProvider>
+          {/* One navbar instance, rendered above every page. */}
+          <Navbar />
+          {/* Each route's page.tsx renders in place of this variable. */}
+          {children}
+          {/* One footer instance, rendered below every page. */}
+          <Footer />
+        </ThemeProvider>
         {/* Global toast outlet (sonner) — auth feedback renders here. */}
         <Toaster richColors closeButton />
       </body>
