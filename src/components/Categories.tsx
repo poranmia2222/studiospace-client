@@ -68,7 +68,10 @@ const CATEGORIES: readonly Category[] = [
 
 /* ------------------------------ Component ------------------------------ */
 
-const Categories = () => {
+const Categories = async () => {
+
+  
+
   return (
     // The id is a scroll anchor ("#categories") for future nav/footer links;
     // scroll-mt-24 stops the sticky navbar from covering the heading.

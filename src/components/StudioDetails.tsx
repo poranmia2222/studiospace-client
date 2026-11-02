@@ -28,13 +28,7 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
   const { data: session } = useSession()
   const user = session?.user;
 
-  /**
-   * Creates a booking via POST /booking. Before sending, checks
-   * GET /my-bookings/{email} so the same studio isn't booked twice —
-   * duplicate attempts surface a warning toast instead. Success,
-   * failure and network errors all surface as sonner toasts
-   * (same pattern as CancelBookingButton / Navbar sign-out).
-   */
+
   const handleAddToBooking = async () => {
     if (!user?.email) {
       toast.error("Please sign in to book a studio.");
