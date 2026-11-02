@@ -111,6 +111,7 @@ const AddNewStudio = () => {
             }
 
             toast.success("Studio added successfully!");
+            router.push('/studios')
 
         } catch {
             toast.error("Couldn't reach the server. Check your connection.");

@@ -5,41 +5,134 @@ import { useState } from "react";
 import {
   CalendarPlus,
   Camera,
+  Loader2,
   MapPin,
-  SquarePen,
   Star,
   Trash2,
   Users,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import EditStudioDialog from "@/components/EditStudioDialog";
 import type { Studio } from "@/components/StudioCard";
 import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const StudioDetails = ({ studio }: { studio: Studio }) => {
+  const router = useRouter()
   const photos = studio.images?.filter(Boolean) ?? [];
   const amenities = studio.amenities ?? [];
   const [selectedPhoto, setSelectedPhoto] = useState(0);
+  const [pending, setPending] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { data: session } = useSession()
   const user = session?.user;
 
-  const newBooking = {
-    name: user?.name,
-    email: user?.email,
-    ...studio,
-    date: new Date().toISOString()
-  }
-
+  /**
+   * Creates a booking via POST /booking. Before sending, checks
+   * GET /my-bookings/{email} so the same studio isn't booked twice —
+   * duplicate attempts surface a warning toast instead. Success,
+   * failure and network errors all surface as sonner toasts
+   * (same pattern as CancelBookingButton / Navbar sign-out).
+   */
   const handleAddToBooking = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newBooking)
-    })
-    const data = await res.json()
-    console.log(data)
-  }
+    if (!user?.email) {
+      toast.error("Please sign in to book a studio.");
+      return;
+    }
+
+    setPending(true);
+    try {
+      // Duplicate check: does this studio already sit in the user's bookings?
+      const bookedRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user.email}`,
+        { cache: "no-store" },
+      );
+      if (bookedRes.ok) {
+        // Response bodies are unwrapped tolerantly (body.bookings ?? body.data ?? body).
+        const body = await bookedRes.json().catch(() => null);
+        const bookings: Array<{ _id?: string; title?: string }> =
+          (body as Record<string, unknown>)?.bookings ??
+          (body as Record<string, unknown>)?.data ??
+          body ??
+          [];
+        const alreadyBooked = Array.isArray(bookings) && bookings.some(
+          (booking) =>
+            (studio._id && booking._id === studio._id) ||
+            (booking.title && booking.title === studio.title),
+        );
+        if (alreadyBooked) {
+          toast.warning("This studio is already in your bookings.");
+          return;
+        }
+      }
+
+      const newBooking = {
+        name: user.name,
+        email: user.email,
+        ...studio,
+        date: new Date().toISOString(),
+      };
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newBooking),
+      });
+
+      if (!res.ok) {
+        toast.error(
+          `The booking service responded with an error (${res.status}). Please try again.`,
+        );
+        return;
+      }
+
+      toast.success(
+        `${studio.title} booked! It's now in your My Bookings list.`,
+      );
+    } catch {
+      // Network error, API not running, invalid JSON...
+      toast.error("We couldn't reach the booking service. Please try again.");
+    } finally {
+      setPending(false);
+    }
+  };
+
+  /**
+   * Deletes the studio via DELETE /studios/{id}, then navigates back to
+   * the studios grid on success. Success / failure both surface as
+   * sonner toasts (same pattern as CancelBookingButton).
+   */
+  const handleDetele = async () => {
+    if (isDeleting || !studio._id) return;
+    setIsDeleting(true);
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/studios/${studio._id}`,
+        { method: "DELETE" },
+      );
+
+      if (!res.ok) {
+        toast.error(
+          `Couldn't delete the studio (status ${res.status}). Please try again.`,
+        );
+        return;
+      }
+
+      toast.success(`${studio.title} deleted.`);
+      // Only leave the page once the delete actually succeeded.
+      router.push("/studios");
+    } catch {
+      // Network error, API not running, invalid JSON...
+      toast.error("We couldn't reach the server. Check your connection.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
 
   return (
     <article>
@@ -64,23 +157,30 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
         <div className="flex shrink-0 items-center gap-2">
           {(user?.email === studio?.email) ?
             <div className="flex gap-3">
+              <EditStudioDialog studio={studio} />
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                className="border-edge bg-surface text-foreground hover:bg-white/[.07]"
-              >
-                <SquarePen data-icon="inline-start" aria-hidden="true" />
-                Edit
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
+                onClick={handleDetele}
+                disabled={isDeleting || !studio._id}
+                title={
+                  studio._id
+                    ? undefined
+                    : "This studio has no id — cannot delete"
+                }
                 className="border-rose-500/30 bg-surface text-rose-400 hover:bg-rose-500/10"
               >
-                <Trash2 data-icon="inline-start" aria-hidden="true" />
-                Delete
+                {isDeleting ? (
+                  <Loader2
+                    data-icon="inline-start"
+                    className="animate-spin"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Trash2 data-icon="inline-start" aria-hidden="true" />
+                )}
+                {isDeleting ? "Deleting…" : "Delete"}
               </Button>
             </div> : ""
           }
@@ -208,9 +308,23 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
             <Users className="h-4 w-4 text-primary" aria-hidden="true" />
             Up to {studio.capacity} people
           </div>
-          <Button onClick={handleAddToBooking} size="lg" className="w-full">
-            <CalendarPlus data-icon="inline-start" aria-hidden="true" />
-            Book now
+          <Button
+            type="button"
+            onClick={handleAddToBooking}
+            size="lg"
+            disabled={pending}
+            className="w-full"
+          >
+            {pending ? (
+              <Loader2
+                data-icon="inline-start"
+                className="animate-spin"
+                aria-hidden="true"
+              />
+            ) : (
+              <CalendarPlus data-icon="inline-start" aria-hidden="true" />
+            )}
+            {pending ? "Booking…" : "Book now"}
           </Button>
           <p className="mt-2 text-center text-xs text-muted">
             Booking &amp; payments are coming soon.

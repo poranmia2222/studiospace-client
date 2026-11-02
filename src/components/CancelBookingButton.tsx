@@ -25,12 +25,7 @@ const CancelBookingButton = ({
   const [pending, setPending] = useState(false);
 
   const handleCancel = async () => {
-    if (
-      !window.confirm(
-        `Cancel your booking for "${title ?? "this studio"}"? This can't be undone.`,
-      )
-    )
-      return;
+    
 
     setPending(true);
     try {
@@ -38,6 +33,8 @@ const CancelBookingButton = ({
         `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${bookingId}`,
         { method: "DELETE" },
       );
+      console.log(bookingId)
+      console.log(res)
 
       if (!res.ok) {
         toast.error(
