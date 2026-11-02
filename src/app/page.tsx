@@ -15,6 +15,7 @@ import Banner from "@/components/Banner"; // hero + banner image slider
 import Categories from "@/components/Categories"; // studio category cards
 import HowItWorks from "@/components/HowItWorks"; // interactive journey tabs
 import AboutUs from "@/components/AboutUs"; // story, mission & features
+import FeaturedSection from "@/components/FeaturedSection";
 
 export default function Home() {
   return (
@@ -22,7 +23,8 @@ export default function Home() {
       {/* Hero / banner section (top of the homepage). */}
       <Banner />
 
-      {/* Studio categories — what kinds of spaces can be found here. */}
+      <FeaturedSection />
+      
       <Categories />
 
       {/* "How it works" — renter vs host tabs + steps + CTA.
