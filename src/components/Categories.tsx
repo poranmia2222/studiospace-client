@@ -101,7 +101,7 @@ const Categories = async () => {
           {CATEGORIES.map((category) => (
             <li key={category.name} className="h-full">
               <Link
-                href={category.href}
+                href={`/studios?category=${encodeURIComponent(category.name)}`}
                 className="group flex h-full flex-col rounded-2xl border border-edge bg-surface p-7 transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-xl hover:shadow-violet-600/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
               >
                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-500/10 text-primary">
