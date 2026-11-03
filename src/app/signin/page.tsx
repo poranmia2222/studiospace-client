@@ -2,12 +2,13 @@
 
 import React, { Suspense, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import GoogleIcon from "@/components/GoogleIcon";
 import { signIn } from "@/lib/auth-client";
 import { LogoMark } from "@/components/Navbar";
 import { toast } from "sonner";
@@ -21,9 +22,37 @@ import { useRouter, useSearchParams } from "next/navigation";
  */
 const SignInFormContent = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [googlePending, setGooglePending] = useState(false);
   const router = useRouter()
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+
+  /**
+   * OAuth sign-in: better-auth redirects the browser to Google's consent
+   * screen (the server must have the google social provider configured).
+   * callbackURL preserves ?callbackUrl so users land where they intended.
+   */
+  const handleGoogle = async () => {
+    if (googlePending) return;
+    setGooglePending(true);
+    try {
+      const { data, error } = await signIn.social({
+        provider: "google",
+        callbackURL: callbackUrl,
+      });
+      // On success better-auth navigates away — this code won't run there.
+      if (error) {
+        toast.error(
+          error.message || "Google sign-in is unavailable right now.",
+        );
+      }
+    } catch {
+      toast.error("We couldn't reach the sign-in service. Please try again.");
+    } finally {
+      setGooglePending(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle login submission logic
@@ -138,6 +167,30 @@ const SignInFormContent = () => {
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Button>
             </form>
+
+            {/* Divider + social sign-in */}
+            <div
+              aria-hidden="true"
+              className="flex items-center gap-3 pt-2 text-xs text-muted"
+            >
+              <span className="h-px flex-1 bg-edge" />
+              or continue with
+              <span className="h-px flex-1 bg-edge" />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={googlePending}
+              onClick={handleGoogle}
+              className="h-12 w-full rounded-full border-edge bg-surface text-sm font-medium text-foreground hover:bg-overlay"
+            >
+              {googlePending ? (
+                <Loader2 className="ml-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <GoogleIcon className="ml-1 mr-2 h-4 w-4" />
+              )}
+              {googlePending ? "Redirecting to Google…" : "Sign in with Google"}
+            </Button>
           </CardContent>
 
           <CardFooter className="flex justify-center border-t border-edge bg-transparent pt-4 pb-6">

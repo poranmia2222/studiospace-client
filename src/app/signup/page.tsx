@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signUp } from "@/lib/auth-client";
+import GoogleIcon from "@/components/GoogleIcon";
+import { signIn, signUp } from "@/lib/auth-client";
 import { LogoMark } from "@/components/Navbar";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -16,7 +17,33 @@ import { useRouter } from "next/navigation";
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [googlePending, setGooglePending] = useState(false);
   const router = useRouter();
+
+  /**
+   * OAuth signup: better-auth routes through Google's consent screen and
+   * auto-registers the account on first login, then lands on the
+   * callbackURL. social() lives on signIn (signUp is email-only).
+   */
+  const handleGoogle = async () => {
+    if (googlePending) return;
+    setGooglePending(true);
+    try {
+      const { error } = await signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+      if (error) {
+        toast.error(
+          error.message || "Google sign-up is unavailable right now.",
+        );
+      }
+    } catch {
+      toast.error("We couldn't reach the sign-up service. Please try again.");
+    } finally {
+      setGooglePending(false);
+    }
+  };
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -183,6 +210,30 @@ export default function SignUpForm() {
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Button>
             </form>
+
+            {/* Divider + social sign-up */}
+            <div
+              aria-hidden="true"
+              className="flex items-center gap-3 pt-2 text-xs text-muted"
+            >
+              <span className="h-px flex-1 bg-edge" />
+              or continue with
+              <span className="h-px flex-1 bg-edge" />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={googlePending}
+              onClick={handleGoogle}
+              className="h-12 w-full rounded-full border-edge bg-surface text-sm font-medium text-foreground hover:bg-overlay"
+            >
+              {googlePending ? (
+                <Loader2 className="ml-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <GoogleIcon className="ml-1 mr-2 h-4 w-4" />
+              )}
+              {googlePending ? "Redirecting to Google…" : "Sign up with Google"}
+            </Button>
           </CardContent>
 
           <CardFooter className="flex justify-center border-t border-edge bg-transparent pt-4 pb-6">

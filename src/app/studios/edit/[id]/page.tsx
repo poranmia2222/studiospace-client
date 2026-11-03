@@ -1,17 +1,42 @@
 import { Suspense } from "react";
 import EditStudioForm from "@/components/EditStudioForm";
 import type { Studio } from "@/components/StudioCard";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 /* ------------------------------ Data ------------------------------ */
 
 type LoadResult = { studio: Studio | null; error?: string };
 
-/** Fetch + normalize one studio; never throws, never crashes. */
+/**
+ * Fetch + normalize one studio (as the signed-in host); never throws,
+ * never crashes. The request carries a JWT from the better-auth jwt
+ * plugin — see src/lib/auth.ts. getToken throws a 401-style API error
+ * when there's no active session, which we fold into a friendly card.
+ */
 const loadStudio = async (id: string): Promise<LoadResult> => {
   try {
+    const jwtToken = await auth.api.getToken({
+      headers: await headers(),
+    });
+    const token = jwtToken?.token;
+    console.log(token)
+    
+    if (!token) {
+      console.log("No JWT token generated");
+      return {
+        studio: null,
+        error: "Authentication token not found.",
+      };
+    }
+
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/studios/${encodeURIComponent(id)}`,
-      { cache: "no-store" }, // always fresh
+      `${process.env.NEXT_PUBLIC_API_URL}/studio/${encodeURIComponent(id)}`,
+      {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      }, // always fresh
     );
 
     if (!res.ok) {
