@@ -1,106 +1,254 @@
-# StudioSpace
 
-**Peer-to-peer creative workspace & production studio sharing platform.**
-Creatives (photographers, filmmakers, musicians, podcasters…) rent professional
-studios by the hour. Studio owners list their spaces and earn when the studio
-would otherwise sit empty — booked directly, no middlemen.
+<div align="center">
 
-> Status: **frontend / UI phase.** Static marketing pages + the beginnings of
-> the marketplace UI. Auth, booking and data come next.
+# 🎨 StudioSpace
 
-## Tech stack
+### Find Your Space. Create Something Extraordinary.
 
-| Layer      | Tool                              | Why |
-| ---------- | --------------------------------- | --- |
-| Framework  | **Next.js 16** (App Router)       | File-based routing, server + client components, static prerendering |
-| UI         | **React 19 + TypeScript**         | Component model with type safety |
-| Styling    | **Tailwind CSS v4**               | Utility classes + CSS-first design tokens (no tailwind.config.js) |
-| Icons      | **lucide-react**                  | Consistent open-source icon set |
-| Components | **shadcn/base-ui (initialized)**  | Prebuilt accessible primitives; custom brand styling on top |
+A creative workspace marketplace where creators discover, explore, and book inspiring studios for their next big project.
 
-## Run it locally
+<br />
+
+[![Live Website](https://img.shields.io/badge/🌐_Live_Website-Visit_StudioSpace-477E4D?style=for-the-badge)](https://studiospace-client-flax.vercel.app/)
+[![GitHub](https://img.shields.io/badge/GitHub-Client_Repository-181717?style=for-the-badge&logo=github)](https://github.com/poranmia2222/studiospace-client)
+[![Server](https://img.shields.io/badge/GitHub-Server_Repository-181717?style=for-the-badge&logo=github)](https://github.com/poranmia2222/studiospace-server)
+
+<br />
+
+![StudioSpace](https://img.shields.io/badge/StudioSpace-Creative_Workspace_Platform-477E4D?style=flat-square)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-Styled-06B6D4?style=flat-square&logo=tailwindcss)
+
+</div>
+
+---
+
+## 📖 About The Project
+
+**StudioSpace** is a peer-to-peer creative workspace and production studio sharing platform designed to connect creative professionals with the perfect spaces for their projects.
+
+Whether someone needs a photography studio, music recording room, video production space, or creative workspace, StudioSpace makes discovering and booking spaces simple and convenient.
+
+The platform also allows studio owners to showcase their spaces and manage their listings.
+
+## ✨ Key Features
+
+| Feature | Description |
+|---|---|
+| 🏠 Modern Homepage | Explore creative spaces through an attractive and responsive interface. |
+| 🔍 Studio Discovery | Browse and discover available creative studios. |
+| 🏢 Studio Details | Explore studio information, facilities, pricing, and availability. |
+| 🔐 Authentication | Secure user authentication powered by Better Auth. |
+| ➕ Add Studio | Authenticated users can publish their studio listings. |
+| ✏️ Manage Studios | Update and manage existing studio information. |
+| 📅 Booking System | Book creative spaces for selected dates and time slots. |
+| 📋 My Bookings | View and manage personal booking information. |
+| 📄 Booking Details | View individual booking details. |
+| 🛡️ Protected Routes | Restrict private pages and API operations to authenticated users. |
+| 📱 Responsive Design | Optimized for desktop, tablet, and mobile devices. |
+
+## 🖥️ Technologies Used
+
+### 🎨 Frontend
+
+<div>
+
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
+![Lucide](https://img.shields.io/badge/Lucide_Icons-F56565?style=for-the-badge&logo=lucide&logoColor=white)
+
+</div>
+
+### ⚙️ Backend
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+
+### 🔐 Authentication & Security
+
+- Better Auth
+- JWT verification using JOSE
+- Protected API endpoints
+- Authenticated booking operations
+
+### 🚀 Deployment & Tools
+
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![NPM](https://img.shields.io/badge/NPM-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+
+---
+
+## 📸 Project Preview
+
+<div align="center">
+
+### 🏡 StudioSpace Homepage
+
+[![Visit StudioSpace](https://img.shields.io/badge/Click_Here-Explore_Live_Project-477E4D?style=for-the-badge)](https://studiospace-client-flax.vercel.app/)
+
+</div>
+
+---
+
+## ⚙️ Installation & Setup
+
+Follow these steps to run StudioSpace locally.
+
+### 1️⃣ Clone the Repository
 
 ```bash
-npm install    # once
-npm run dev    # dev server → http://localhost:3000
+git clone https://github.com/poranmia2222/studiospace-client.git
 ```
 
-Other commands: `npm run build` (production build + typecheck),
-`npm run lint` (ESLint), `npx tsc --noEmit` (typecheck only).
-The site currently ships as fully static pages (see prerender output in the build log).
+### 2️⃣ Navigate to the Project Directory
 
-## Project map — one file, one job
-
-```
-src/
-  app/
-    layout.tsx            # HTML shell: fonts, metadata, <Navbar> (wraps every page)
-    globals.css           # design tokens (colors/fonts) + shared animations
-    page.tsx              # home route: composes <Banner> + <HowItWorks> + About
-    studios/page.tsx      # /studios — "Explore Studios" listing grid (sample data)
-    signin|signup/...     # placeholder pages (real auth is a later milestone)
-    add-studio/page.tsx   # /add-studio — target of the "List Your Studio" CTA
-  components/
-    Navbar.tsx            # sticky header, responsive links, active-route highlight
-    Banner.tsx            # homepage hero: copy, CTAs, glows, static stat chips
-    hero-slider.tsx       # auto-playing image carousel (banner_images/)
-    HowItWorks.tsx        # renter/host tabs → 4 step cards + CTA banner
-public/
-  banner_images/          # hero slide photos (banner1–3.jpg)
+```bash
+cd studiospace-client
 ```
 
-## Core concepts used (glossary for interviews)
+### 3️⃣ Install Dependencies
 
-Each file's top has a comment block explaining the concepts below in context.
+```bash
+npm install
+```
 
-- **Server vs. Client Components** — pages and static sections run on the
-  server and ship no JS; components needing interactivity (`useState`,
-  hooks, event handlers) are marked `"use client"` (Navbar, HeroSlider,
-  HowItWorks). Mixing them keeps the JS bundle small.
-- **File-based routing** — a folder in `src/app` + `page.tsx` file *is* a
-  route. `layout.tsx` wraps all of them automatically.
-- **State & effects** — slider position = `useState`; auto-play timers live
-  in `useEffect` with proper **cleanup** functions; refs (`useRef`) focus
-  tabs programmatically for keyboard accessibility.
-- **Client-side navigation** — `<Link>` swaps pages without reloading; with
-  Next 16's **typed routes**, `href="/studios"` is type-checked against real
-  routes, so dead links fail the build.
-- **Design tokens** — colors/fonts are CSS variables in `globals.css`
-  (`--primary`, `--surface`…) mapped by Tailwind v4's `@theme` into utility
-  classes (`bg-primary`, `text-muted`), so restyling is a one-file change.
-- **Responsive design** — mobile-first Tailwind breakpoints
-  (`sm:` `md:` `lg:`): e.g. the How-It-Works grid is a vertical timeline,
-  then 2 columns, then 4 columns with arrow connectors.
-- **Accessibility** — tabs follow the WAI-ARIA pattern
-  (`role="tablist"`, `aria-selected`, arrow-key navigation), icon-only
-  buttons carry `aria-label`s, decorative layers are `aria-hidden`, and
-  smooth-scrolling is disabled under `prefers-reduced-motion`. (Per design
-  decision, the only continuously animated element is the hero slider.)
-- **Image optimization** — `next/image` handles sizing, lazy-loading and
-  format conversion; only the first hero slide gets `priority`.
+### 4️⃣ Configure Environment Variables
 
-## Demo script (5-minute walkthrough)
+Create a `.env.local` file in the root directory.
 
-1. **Open `/`** — point out the sticky navbar (active-link highlight comes
-   from `usePathname`), then the hero: static eyebrow badge, gradient
-   headline, floating-looking stat chips, and the image slider (the only
-   animated element on the site) that auto-advances, pauses on hover, and
-   has dots + arrows.
-2. **Scroll to How It Works** — show the two journey tabs ("For Creators" /
-   "For Studio Owners"); click a step card, then switch tabs and let the
-   staggered entrance animation replay. Mention keyboard: press Tab into the
-   tabs and use arrow keys.
-3. **Resize or open devtools mobile view** — navbar links collapse, steps
-   switch from a 4-connected-card row to a vertical timeline.
-4. **Explore Studios** (`/studios`) — sample listing cards with rates +
-   amenity tags.
-5. **Close with the details** — Lighthouse-style habits baked in: design
-   tokens for consistent branding, reduced-motion support, semantic
-   elements (`header/nav/main/ol/section`), `npm run build` passing with
-   zero type errors.
+```env
+# Backend API
+NEXT_PUBLIC_API_URL=http://localhost:8000
 
-## What's next (roadmap)
+# MongoDB
+MONGODB_URI=your_mongodb_connection_string
 
-- Real auth (sign up / sign in → accounts for creators & owners)
-- Data layer: studio listings DB, search/filter endpoints, booking flow
-- Listing detail pages; photo uploads; pricing & availability calendars
+# Better Auth
+BETTER_AUTH_SECRET=your_better_auth_secret
+BETTER_AUTH_URL=http://localhost:3000
+```
+
+Replace the placeholder values with your actual credentials.
+
+### 5️⃣ Start the Development Server
+
+```bash
+npm run dev
+```
+
+Open your browser and visit:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## 📂 Project Structure
+
+```text
+studiospace-client/
+│
+├── public/
+│
+├── src/
+│   ├── app/
+│   │   ├── (auth)/
+│   │   ├── studios/
+│   │   ├── my-bookings/
+│   │   ├── add-studio/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   │
+│   ├── components/
+│   ├── lib/
+│   ├── hooks/
+│   └── types/
+│
+├── .env.local
+├── next.config.ts
+├── package.json
+└── README.md
+```
+
+> 📝 This is an illustrative folder structure. Adjust it to match your actual project.
+
+---
+
+## 🌐 Backend API
+
+StudioSpace uses a separate REST API built with Express.js and MongoDB.
+
+🔗 **Server Repository:** [studiospace-server](https://github.com/poranmia2222/studiospace-server)
+
+The backend is responsible for:
+
+- 🏢 Studio creation and management
+- 🔍 Studio discovery and details
+- 📅 Booking creation and management
+- 👤 User-specific booking retrieval
+- ❌ Booking cancellation
+- 🔐 JWT authentication and authorization
+
+---
+
+## 🔒 Environment Variables
+
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | Backend API base URL |
+| `MONGODB_URI` | MongoDB connection string |
+| `BETTER_AUTH_SECRET` | Better Auth secret key |
+| `BETTER_AUTH_URL` | Frontend application URL |
+
+⚠️ **Security Note:** Never commit `.env.local` or expose private credentials in your public repository.
+
+---
+
+## 🚀 Deployment
+
+The frontend is deployed on **Vercel**.
+
+To deploy your own version:
+
+1. Push your project to GitHub.
+2. Import the repository into Vercel.
+3. Configure the required environment variables.
+4. Configure the backend's allowed frontend origin.
+5. Deploy your application.
+
+---
+
+## 👨‍💻 Author
+
+<div align="center">
+
+### Poran Mia
+
+**Full Stack Developer | MERN Stack Developer**
+
+Passionate about building modern web applications and creating useful digital experiences.
+
+[![GitHub](https://img.shields.io/badge/GitHub-poranmia2222-181717?style=for-the-badge&logo=github)](https://github.com/poranmia2222)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Poran_Mia-0A66C2?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/poranmia/)
+
+</div>
+
+---
+
+<div align="center">
+
+### ⭐ If you like this project, consider giving it a star!
+
+**Made with ❤️ by Poran Mia**
+
+*StudioSpace — Find your space. Create something extraordinary.*
+
+</div>
