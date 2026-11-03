@@ -154,7 +154,7 @@ const BookingCard = ({ booking, className }: { booking: Booking; className?: str
             {statusMeta?.label === "Pending" && (
               <CancelBookingButton bookingId={booking._id} title={booking.title} />
             )}
-            <Link href={`/studios/${booking._id}`} className={buttonVariants()}>
+            <Link href={`/my-bookings/${booking._id}`} className={buttonVariants()}>
               View details
               <ArrowRight data-icon="inline-end" aria-hidden="true" />
             </Link>

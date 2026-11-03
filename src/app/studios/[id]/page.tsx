@@ -9,6 +9,7 @@ type LoadResult = { studio: Studio | null; error?: string };
 /** Fetch + normalize one studio; never throws, never crashes. */
 const loadStudio = async (id: string): Promise<LoadResult> => {
   try {
+    
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/studios/${encodeURIComponent(id)}`,
       { cache: "no-store" }, // always fresh

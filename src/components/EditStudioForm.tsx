@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Studio } from "@/components/StudioCard";
+import { authClient } from "@/lib/auth-client";
 
 /* Same category list as the add-studio form. */
 const CATEGORIES = [
@@ -106,11 +107,16 @@ const EditStudioForm = ({ studio }: { studio: Studio }) => {
         };
 
         try {
+            const {data, error} = await authClient.token()
+            const token = data?.token
+
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/studios/${studio._id}`,
                 {
                     method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "application/json" ,
+                        authorization: `Bearer ${token}`
+                    },
                     body: JSON.stringify(postData),
                 },
             );

@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import type { Studio } from "@/components/StudioCard";
-import { useSession } from "@/lib/auth-client";
+import { authClient, useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -81,7 +81,9 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
       // Duplicate check: does this studio already sit in the user's bookings?
       const bookedRes = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user.email}`,
-        { cache: "no-store" },
+        {
+          cache: "no-store",
+        },
       );
       if (bookedRes.ok) {
         // Response bodies are unwrapped tolerantly (body.bookings ?? body.data ?? body).
@@ -119,10 +121,14 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
         endTime,
       };
 
+      const { data: resData } = await authClient.token()
+      const token = resData?.token
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${token}`
         },
         body: JSON.stringify(newBooking),
       });
@@ -165,9 +171,16 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
     setIsDeleting(true);
 
     try {
+      const { data: resData, error } = await authClient.token()
+      const token = resData?.token
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/studios/${studio._id}`,
-        { method: "DELETE" },
+        {
+          method: "DELETE",
+          headers: {
+            authorization: `Bearer ${token}`
+          }
+        },
       );
 
       if (!res.ok) {
@@ -288,7 +301,7 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
                   className="scale-125 object-cover blur-2xl brightness-[.35]"
                 />
                 <Image
-                  key={photos[selectedPhoto]}
+                  key={photos[selectedPhoto+1]}
                   src={photos[selectedPhoto]}
                   alt={`Photo ${selectedPhoto + 1} of ${studio.title}`}
                   fill

@@ -3,6 +3,7 @@ import { AlertTriangle, CalendarX2, LogIn } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import BookingCard, { type Booking } from "@/components/BookingCard";
+import { authClient } from "@/lib/auth-client";
 
 /* ------------------------------ Data ------------------------------ */
 
@@ -13,9 +14,19 @@ const loadBookings = async (emailId?: string): Promise<LoadResult> => {
   if (!emailId) return { bookings: [], error: "auth" };
 
   try {
+
+    const jwtToken = await auth.api.getToken({
+      headers: await headers(),
+    })
+    const token = jwtToken?.token
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${emailId}`,
-      { cache: "no-store" }, // always fresh
+      {
+        cache: "no-store",
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      }, // always fresh
     );
 
     if (!res.ok) {
@@ -31,8 +42,8 @@ const loadBookings = async (emailId?: string): Promise<LoadResult> => {
     const list: unknown = Array.isArray(body)
       ? body
       : (body as Record<string, unknown>)?.data ??
-        (body as Record<string, unknown>)?.bookings ??
-        (body as Record<string, unknown>)?.results;
+      (body as Record<string, unknown>)?.bookings ??
+      (body as Record<string, unknown>)?.results;
 
     const bookings = (Array.isArray(list) ? list : []).filter(
       (booking): booking is Booking => {

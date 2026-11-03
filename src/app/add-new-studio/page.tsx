@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSession } from "@/lib/auth-client";
+import { authClient, useSession } from "@/lib/auth-client";
 
 /* Same category list as the homepage category cards. */
 const CATEGORIES = [
@@ -97,9 +97,15 @@ const AddNewStudio = () => {
         };
 
         try {
+
+            const {data, error} = await authClient.token()
+            const token = data?.token
+
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json" ,
+                    authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify(postData),
             });
 

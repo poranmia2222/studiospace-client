@@ -20,7 +20,7 @@ const loadStudio = async (id: string): Promise<LoadResult> => {
       headers: await headers(),
     });
     const token = jwtToken?.token;
-    console.log(token)
+    // console.log(token)
     
     if (!token) {
       console.log("No JWT token generated");

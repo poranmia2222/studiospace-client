@@ -1,17 +1,21 @@
+
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { signOut, useSession } from "@/lib/auth-client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import ThemeToggle from "@/components/ThemeToggle"
+} from "@/components/ui/avatar";
+
+import { Button } from "@/components/ui/button";
+import ThemeToggle from "@/components/ThemeToggle";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,11 +23,18 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
+import {
+  Menu,
+  X,
+  LayoutDashboard,
+  PlusCircle,
+  CalendarDays,
+  LogOut,
+} from "lucide-react";
 
-// No "#": hash links (like "/#about-us") scroll to a section on the home
-// page, so they never count as the "active route" below.
+// Navigation links
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Explore Studios", href: "/studios" },
@@ -31,12 +42,16 @@ const NAV_LINKS = [
   { label: "About Us", href: "/#about-us" },
 ] as const;
 
-/** Logo mark: a light-bolt inside a violet gradient tile (studio lighting).
- * Exported so the footer can reuse the exact same logo. */
+// Logo
 export function LogoMark() {
   return (
     <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 shadow-lg shadow-violet-600/30">
-      <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        className="h-5 w-5"
+        aria-hidden="true"
+      >
         <path
           d="M13 2 4.5 13.5h5L9 22l8.5-11.5h-5L13 2Z"
           fill="white"
@@ -49,33 +64,34 @@ export function LogoMark() {
   );
 }
 
-/**
- * Center nav links: read usePathname() to highlight the current route.
- * Extracted so the hook call sits inside a <Suspense> boundary (the hook
- * only matters after hydration — the shell doesn't need it to prerender).
- */
+// Active link checker
+const isActiveLink = (pathname: string, href: string) => {
+  if (href.includes("#")) return false;
+
+  return href === "/"
+    ? pathname === "/"
+    : pathname.startsWith(href);
+};
+
+// Desktop navigation
 const NavLinks = () => {
   const pathname = usePathname();
 
   return (
     <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
       {NAV_LINKS.map(({ label, href }) => {
-        // Active-state logic: hash links are never "active"; for normal
-        // links, "/" only matches the homepage exactly, other routes can
-        // match by prefix.
-        const isHashLink = href.includes("#");
-        const isActive = !isHashLink &&
-          (href === "/" ? pathname === "/" : pathname.startsWith(href));
+        const active = isActiveLink(pathname, href);
 
         return (
           <li key={href}>
             <Link
               href={href}
-              aria-current={isActive ? "page" : undefined}
-              className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${isActive
-                ? "bg-overlay font-medium text-foreground"
-                : "text-muted hover:bg-overlay-soft hover:text-foreground"
-                }`}
+              aria-current={active ? "page" : undefined}
+              className={`rounded-full px-3.5 py-2 text-[12px] lg:text-sm  transition-colors ${
+                active
+                  ? "bg-overlay font-medium text-foreground"
+                  : "text-muted hover:bg-overlay-soft hover:text-foreground"
+              }`}
             >
               {label}
             </Link>
@@ -86,98 +102,338 @@ const NavLinks = () => {
   );
 };
 
+// Mobile navigation
+const MobileNavLinks = ({
+  onNavigate,
+}: {
+  onNavigate: () => void;
+}) => {
+  const pathname = usePathname();
+
+  return (
+    <ul className="grid gap-1">
+      {NAV_LINKS.map(({ label, href }) => {
+        const active = isActiveLink(pathname, href);
+
+        return (
+          <li key={href}>
+            <Link
+              href={href}
+              onClick={onNavigate}
+              aria-current={active ? "page" : undefined}
+              className={`block rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+                active
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted hover:bg-overlay-soft hover:text-foreground"
+              }`}
+            >
+              {label}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+// Profile dropdown
+const ProfileDropdown = ({
+  user,
+  handleSignOut,
+}: {
+  user: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  };
+  handleSignOut: () => void;
+}) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            aria-label="Open profile menu"
+          >
+            <Avatar>
+              <AvatarImage
+                src={user.image ?? ""}
+                alt={user.name ?? "Profile"}
+              />
+              <AvatarFallback>
+                {user.name?.charAt(0).toUpperCase() ?? "U"}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        }
+      />
+
+      <DropdownMenuContent
+        align="end"
+        sideOffset={8}
+        className="w-56 border border-edge bg-surface text-foreground"
+      >
+        <div className="flex flex-col gap-0.5 border-b border-edge px-3 pb-3 pt-2.5">
+          <p className="truncate text-sm font-medium">{user.name}</p>
+          <p className="truncate text-xs text-muted">{user.email}</p>
+        </div>
+
+        <DropdownMenuGroup>
+          <DropdownMenuItem>
+            <Link href="/add-new-studio" className="flex">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add New Studio
+            </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem >
+            <Link href="/my-studio-listing" className="flex">
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              My Studio Listings
+            </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem>
+            <Link href="/my-bookings" className="flex">
+              <CalendarDays className="mr-2 h-4 w-4" />
+              My Bookings
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          onClick={handleSignOut}
+          className="text-rose-500 focus:text-rose-500"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 const Navbar = () => {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
   const user = session?.user;
-  // console.log(user)
+
+  const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     try {
-      await signOut()
-      toast.success("Signed out successfully.")
+      await signOut();
+      setMobileMenuOpen(false);
+      toast.success("Signed out successfully.");
+      router.push("/signin");
     } catch {
-      toast.error("Failed to sign out. Please try again.")
+      toast.error("Failed to sign out. Please try again.");
     }
-  }
+  };
 
   return (
-    // sticky top-0 = header stays pinned while scrolling; z-50 keeps it above
-    // other content; backdrop-blur = frosted-glass look over the page.
-    <header className="sticky top-0 z-50 w-full border-b border-edge bg-background/80 backdrop-blur-md">
-      {/* Center links use absolute positioning inside this relative nav,
-          which guarantees they're perfectly centered between logo & buttons. */}
-      <nav className="relative mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
-        {/* Left: logo */}
-        <Link href="/" className="flex items-center gap-2.5">
+    <header className="sticky top-0 z-50 w-full border-b border-edge bg-background/90 backdrop-blur-xl">
+
+      {/* Main Navbar */}
+      <nav className="relative mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
+
+        {/* Logo */}
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2.5"
+          onClick={() => setMobileMenuOpen(false)}
+        >
           <LogoMark />
+
           <span className="text-lg font-semibold tracking-tight">
             Studio<span className="text-muted">Space</span>
           </span>
         </Link>
 
-        {/* Center: nav links (hidden on small screens — mobile menu TODO).
-            usePathname() is runtime data under Cache Components, so the
-            active-link computation lives in a subcomponent streamed inside
-            Suspense; the header shell prerenders with plain links. */}
-        <Suspense
-          fallback={
-            <nav aria-label="Navigation (loading)" hidden>
-              {/* Hidden placeholder: same links, no active-route logic,
-                  reserves the header's height while the real ones stream. */}
-            </nav>
-          }
-        >
+        {/* Desktop Navigation */}
+        <Suspense fallback={null}>
           <NavLinks />
         </Suspense>
 
-        {/* Right: theme toggle + auth actions (placeholder pages until real auth lands) */}
-        <div className="flex items-center gap-2.5">
+        {/* Right Actions */}
+        <div className="flex items-center gap-2">
+
           <ThemeToggle />
-          {session ? <div className="flex items-center gap-2.5">
-            <p className="hidden max-w-28 truncate text-sm font-medium sm:block">
-              {user?.name}
-            </p>
-            <DropdownMenu>
-              <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full"><Avatar>
-                <AvatarImage src={user?.image as string} alt={user?.name ?? "Profile"} />
-                <AvatarFallback>{user?.name?.charAt(0).toUpperCase() ?? "U"}</AvatarFallback>
-              </Avatar></Button>} />
-              {/* align="end" anchors the menu's RIGHT edge to the avatar so it
-                  opens leftward instead of overflowing past the screen edge. */}
-              <DropdownMenuContent align="end" sideOffset={8} className="w-56 bg-surface border border-edge text-foreground">
-                <div className="flex flex-col gap-0.5 border-b border-edge px-2 pb-2 pt-2.5">
-                  <p className="truncate text-sm font-medium">{user?.name}</p>
-                  <p className="truncate text-xs text-muted">{user?.email}</p>
-                </div>
-                <DropdownMenuGroup className="">
-                  <DropdownMenuItem><Link href={'/add-new-studio'}>Add New Studio</Link></DropdownMenuItem>
-                  <DropdownMenuItem><Link href={'/my-studio-listing'}>My Studio Listings</Link></DropdownMenuItem>
-                  <DropdownMenuItem><Link href={'/my-bookings'}>My Bookings</Link></DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <Button className="" onClick={handleSignOut}>Log out</Button>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-            : <div className="flex items-center gap-3">
-              <Link
-                href="/signin"
-                className="hidden h-9 items-center rounded-full border border-edge px-4 text-sm font-medium text-foreground transition-colors hover:border-muted hover:bg-overlay-soft sm:flex"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/signup"
-                className="flex h-9 items-center rounded-full bg-primary px-4 text-sm font-medium text-white transition-colors hover:bg-primary-strong"
-              >
-                Sign Up
-              </Link>
-            </div>
-          }
+
+          {session ? (
+            <>
+              {/* Desktop user name */}
+              <p className="hidden max-w-28 truncate text-sm font-medium sm:block">
+                {user?.name}
+              </p>
+
+              <ProfileDropdown
+                user={user ?? {}}
+                handleSignOut={handleSignOut}
+              />
+            </>
+          ) : (
+            <>
+              {/* Desktop authentication */}
+              <div className="hidden items-center gap-3 sm:flex">
+                <Link
+                  href="/signin"
+                  className="flex h-9 items-center rounded-full border border-edge px-4 text-sm font-medium transition-colors hover:bg-overlay-soft"
+                >
+                  Sign In
+                </Link>
+
+                <Link
+                  href="/signup"
+                  className="flex h-9 items-center rounded-full bg-primary px-4 text-sm font-medium text-white transition-colors hover:bg-primary-strong"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            </>
+          )}
+
+          {/* Mobile Menu Toggle */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+          >
+            {mobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </Button>
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      <div
+        id="mobile-navigation"
+        className={`grid overflow-hidden transition-all duration-300 ease-in-out md:hidden ${
+          mobileMenuOpen
+            ? "grid-rows-[1fr] opacity-100"
+            : "grid-rows-[0fr] opacity-0"
+        }`}
+        aria-hidden={!mobileMenuOpen}
+        inert={!mobileMenuOpen}
+      >
+        <div className="min-h-0">
+          <div className="mx-auto max-w-6xl border-t border-edge px-4 py-4 sm:px-6">
+
+            {/* Mobile Navigation Links */}
+            <Suspense fallback={null}>
+              <MobileNavLinks
+                onNavigate={() => setMobileMenuOpen(false)}
+              />
+            </Suspense>
+
+            {/* Mobile Authentication */}
+            {!session && (
+              <div className="mt-4 grid grid-cols-2 gap-3 border-t border-edge pt-4">
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl"
+                >
+                  <Link
+                    href="/signin"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Sign In
+                  </Link>
+                </Button>
+
+                <Button
+                  className="w-full rounded-xl"
+                >
+                  <Link
+                    href="/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Sign Up
+                  </Link>
+                </Button>
+              </div>
+            )}
+
+            {/* Mobile User Account */}
+            {session && (
+              <div className="mt-4 border-t border-edge pt-4">
+                <div className="mb-3 flex items-center gap-3 px-3">
+                  <Avatar>
+                    <AvatarImage
+                      src={user?.image ?? ""}
+                      alt={user?.name ?? "Profile"}
+                    />
+                    <AvatarFallback>
+                      {user?.name?.charAt(0).toUpperCase() ?? "U"}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">
+                      {user?.name}
+                    </p>
+                    <p className="truncate text-xs text-muted">
+                      {user?.email}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid gap-1">
+                  <Link
+                    href="/add-new-studio"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-muted hover:bg-overlay-soft hover:text-foreground"
+                  >
+                    <PlusCircle className="h-4 w-4" />
+                    Add New Studio
+                  </Link>
+
+                  <Link
+                    href="/my-studio-listing"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-muted hover:bg-overlay-soft hover:text-foreground"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    My Studio Listings
+                  </Link>
+
+                  <Link
+                    href="/my-bookings"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-muted hover:bg-overlay-soft hover:text-foreground"
+                  >
+                    <CalendarDays className="h-4 w-4" />
+                    My Bookings
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm text-rose-500 hover:bg-rose-500/10"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Log out
+                  </button>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      </div>
     </header>
   );
 };

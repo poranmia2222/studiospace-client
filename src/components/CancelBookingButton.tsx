@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
 
 /**
  * Deletes a booking via DELETE /my-bookings/{id}, then refreshes the
@@ -30,9 +31,16 @@ const CancelBookingButton = ({
 
     setPending(true);
     try {
+      const { data: resData, error } = await authClient.token()
+      const token = resData?.token
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${bookingId}`,
-        { method: "DELETE" },
+        {
+          method: "DELETE",
+          headers: {
+            authorization: `Bearer ${token}`
+          }
+        },
       );
       console.log(bookingId)
       console.log(res)
