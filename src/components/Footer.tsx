@@ -184,7 +184,7 @@ const Footer = () => {
 
   return (
     <footer className="border-t border-edge bg-surface">
-      <div className="mx-auto w-full max-w-6xl px-6 py-16">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-16">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.4fr] lg:gap-8">
           {/* Brand: logo, mission statement, social links */}
           <div>
@@ -255,7 +255,7 @@ const Footer = () => {
         </div>
 
         {/* Copyright & terms notice */}
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-edge pt-8 text-center sm:flex-row sm:text-left">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-edge pt-6 text-center sm:mt-14 sm:flex-row sm:pt-8 sm:text-left">
           <p className="text-sm text-muted">
             © {COPYRIGHT_YEAR} StudioSpace. All rights reserved.
           </p>

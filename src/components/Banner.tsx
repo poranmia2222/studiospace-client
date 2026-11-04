@@ -45,7 +45,7 @@ const Banner = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.05)_1px,transparent_1px)] [background-size:26px_26px] [mask-image:linear-gradient(to_bottom,black,transparent_70%)]" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-6xl px-6 py-16 sm:py-24">
+      <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
           {/* Left: copy */}
           <div>
@@ -57,7 +57,7 @@ const Banner = () => {
               </span>
             </div>
 
-            <h1 className="mt-6 max-w-xl text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
+            <h1 className="mt-6 max-w-xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
               Space to{" "}
               <span className="relative whitespace-nowrap">
                 create

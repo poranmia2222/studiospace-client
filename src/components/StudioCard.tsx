@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Camera, MapPin, Star, Users } from "lucide-react";
-import { buttonVariants, Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /* The data schema for one studio coming from GET /studios. */
@@ -48,7 +48,7 @@ const StudioCard = ({
   return (
     <article
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-2xl border border-edge bg-surface",
+        "group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-edge bg-surface",
         CARD_HOVER,
         className,
       )}
@@ -115,28 +115,38 @@ const StudioCard = ({
           </span>
         </div>
 
-        <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted">
+        {/* flex-1 grows this block so short descriptions still stretch to
+            the same card height — the price footer always sits at the
+            bottom, giving every card in a row an identical footprint. */}
+        <p className="mt-3 flex-1 line-clamp-2 text-sm leading-6 text-muted">
           {studio.description}
         </p>
 
-        {/* Amenity chips: first 3 perks + a "+N more" for the rest */}
-        {amenities.length > 0 && (
-          <ul className="mt-4 flex flex-wrap gap-2">
-            {amenities.map((amenity) => (
-              <li
-                key={amenity}
-                className="rounded-full border border-edge bg-overlay-soft px-2.5 py-1 text-xs text-muted"
-              >
-                {amenity}
-              </li>
-            ))}
-            {extraAmenities > 0 && (
-              <li className="rounded-full border border-violet-500/40 px-2.5 py-1 text-xs text-primary">
-                +{extraAmenities} more
-              </li>
-            )}
-          </ul>
-        )}
+        {/* Amenity chips: first 3 perks + a "+N more" for the rest.
+            The row always reserves one chip-line of height (min-h-7)
+            and is simply hidden for studios with none, so a card with
+            0, 1 or 3 amenities keeps its price footer at exactly the
+            same position as its neighbours. */}
+        <ul
+          className={cn(
+            "mt-4 flex min-h-7 flex-wrap items-start gap-2",
+            amenities.length === 0 && "hidden",
+          )}
+        >
+          {amenities.map((amenity) => (
+            <li
+              key={amenity}
+              className="rounded-full border border-edge bg-overlay-soft px-2.5 py-1 text-xs text-muted"
+            >
+              {amenity}
+            </li>
+          ))}
+          {extraAmenities > 0 && (
+            <li className="rounded-full border border-violet-500/40 px-2.5 py-1 text-xs text-primary">
+              +{extraAmenities} more
+            </li>
+          )}
+        </ul>
 
         {/* -------- Price footer (pushed to the bottom by flex) -------- */}
         <div className="mt-5 flex items-center justify-between border-t border-edge pt-4">

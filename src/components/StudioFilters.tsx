@@ -56,7 +56,7 @@ const FilterPill = ({
       aria-label={label}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="h-11 w-full min-w-[11rem] cursor-pointer appearance-none rounded-full border border-edge bg-surface py-0 pl-5 pr-10 text-xs font-semibold uppercase tracking-[0.12em] text-foreground transition-colors hover:border-violet-500/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
+      className="h-11 w-full sm:w-auto sm:min-w-[11rem] cursor-pointer appearance-none rounded-full border border-edge bg-surface py-0 pl-5 pr-10 text-xs font-semibold uppercase tracking-[0.12em] text-foreground transition-colors hover:border-violet-500/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
     >
       {/* Empty value = "no filter selected" — treated as the label. */}
       <option value="">{label}</option>

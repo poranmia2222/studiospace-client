@@ -164,7 +164,7 @@ const BookingsSection = async () => {
 
 const MyBookings = () => {
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 py-20">
+    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-20">
       {/* Section header (same pattern as the /studios page) */}
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
@@ -177,7 +177,7 @@ const MyBookings = () => {
           </span>
         </h1>
         <p className="mt-4 text-lg leading-8 text-muted">
-          Every studio you've booked, with the date you booked it and quick
+          Every studio you&apos;ve booked, with the date you booked it and quick
           access to the details.
         </p>
       </div>

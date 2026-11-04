@@ -74,12 +74,14 @@ const BookingCard = ({ booking, className }: { booking: Booking; className?: str
   return (
     <article
       className={cn(
-        "group flex h-full overflow-hidden rounded-2xl border border-edge bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-xl hover:shadow-violet-600/10 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:flex-row",
+        "group flex h-full flex-col overflow-hidden rounded-2xl border border-edge bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-xl hover:shadow-violet-600/10 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:flex-row",
         className,
       )}
     >
-      {/* -------- Thumbnail (side on tablet+, stacked on mobile) -------- */}
-      <div className="relative h-44 w-full shrink-0 overflow-hidden sm:h-auto sm:w-52">
+      {/* -------- Thumbnail (side on tablet+, stacked on mobile).
+              h-48 matches the vertical StudioCard cover height so every
+              card variant on the site renders at the same size. -------- */}
+      <div className="relative h-48 w-full shrink-0 overflow-hidden sm:h-auto sm:w-52">
         {cover ? (
           <Image
             src={cover}
@@ -140,9 +142,9 @@ const BookingCard = ({ booking, className }: { booking: Booking; className?: str
           </span>
         </div>
 
-        <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted">{booking.description}</p>
+        <p className="mt-3 flex-1 line-clamp-2 text-sm leading-6 text-muted">{booking.description}</p>
 
-        {/* Footer: price + actions, pushed to the bottom by flex */}
+        {/* Footer: price + actions, pinned to the bottom by flex-1 above */}
         <div className="mt-4 flex items-center justify-between gap-3 border-t border-edge pt-4">
           <p className="text-lg font-semibold">
             <span className="text-primary">${booking.hourlyRate}</span>

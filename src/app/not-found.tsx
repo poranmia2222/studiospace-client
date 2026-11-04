@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 export default function NotFound() {
   return (
     <main className="flex-1">
-      <div className="mx-auto flex w-full max-w-6xl justify-center px-6 py-20">
+      <div className="mx-auto flex w-full max-w-6xl justify-center px-4 sm:px-6 py-12 sm:py-20">
         {/* Same friendly card style as the StatusCard empty/error states
             on the studios grid — icon tile, heading, description. */}
         <div className="flex max-w-md flex-col items-center rounded-2xl border border-edge bg-surface px-8 py-14 text-center shadow-sm">

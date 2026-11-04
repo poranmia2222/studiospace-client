@@ -78,7 +78,6 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
 
     setPending(true);
     try {
-      // Duplicate check: does this studio already sit in the user's bookings?
       const bookedRes = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user.email}`,
         {
@@ -86,7 +85,6 @@ const StudioDetails = ({ studio }: { studio: Studio }) => {
         },
       );
       if (bookedRes.ok) {
-        // Response bodies are unwrapped tolerantly (body.bookings ?? body.data ?? body).
         const body = await bookedRes.json().catch(() => null);
         const bookings: Array<{ _id?: string; title?: string }> =
           (body as Record<string, unknown>)?.bookings ??

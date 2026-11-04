@@ -59,7 +59,7 @@ export function HeroSlider() {
       {/* Sliding track: translateX moves the whole row of slides leftwards.
           `duration-700 ease-out` animates the movement smoothly. */}
       <div
-        className="flex h-[380px] transition-transform duration-700 ease-out sm:h-[460px]"
+        className="flex h-72 transition-transform duration-700 ease-out sm:h-95 lg:h-115"
         style={{ transform: `translateX(-${index * 100}%)` }}
       >
         {SLIDES.map(
@@ -132,21 +132,6 @@ export function HeroSlider() {
         </svg>
       </button>
 
-      {/* Dots: quick jump buttons; the active dot stretches wide. */}
-      <div className="absolute bottom-5 right-5 flex gap-1.5">
-        {SLIDES.map((slide, i) => (
-          <button
-            key={slide.src}
-            type="button"
-            onClick={() => setIndex(i)}
-            aria-label={`Go to slide ${i + 1}`}
-            aria-current={i === index ? "true" : undefined}
-            className={`h-1.5 rounded-full transition-all ${
-              i === index ? "w-6 bg-white" : "w-1.5 bg-white/40 hover:bg-white/70"
-            }`}
-          />
-        ))}
-      </div>
     </div>
   );
 }

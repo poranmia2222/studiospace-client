@@ -285,7 +285,7 @@ const HowItWorks = () => {
         id="how-it-works"
         className="scroll-mt-24 border-t border-edge bg-surface/50"
       >
-        <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:py-24">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
           <SectionHeader
             eyebrow="How StudioSpace Works"
             lead="Your Creative"
@@ -358,7 +358,7 @@ const HowItWorks = () => {
           SECTION 2 — TRUST & SUPPORT (host guarantee & creator support)
           ============================================================= */}
       <section id="trust-support" className="scroll-mt-24 border-t border-edge">
-        <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:py-24">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
           <SectionHeader
             eyebrow="Trust & Support"
             lead="Create With"

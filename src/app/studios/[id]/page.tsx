@@ -114,7 +114,7 @@ export default function StudioDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-10 md:py-12">
+    <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 py-8 sm:py-10 md:py-12">
       {/* The no-store fetch AND the params read both happen inside Suspense:
           the route shell renders instantly and this section fills in while
           the request is in flight (same pattern as the /studios grid). */}

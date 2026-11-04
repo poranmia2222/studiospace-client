@@ -130,7 +130,7 @@ const BookingDetails = ({ id }: { id: string }) => {
   });
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 py-10 md:py-14">
+    <main className="mx-auto w-full max-w-5xl px-4 sm:px-5 py-8 sm:py-10 md:py-14">
 
       {/* Back navigation */}
       <Button variant="ghost" className="mb-6">

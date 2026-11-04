@@ -76,7 +76,7 @@ const Categories = async () => {
     // The id is a scroll anchor ("#categories") for future nav/footer links;
     // scroll-mt-24 stops the sticky navbar from covering the heading.
     <section id="categories" className="scroll-mt-24 border-t border-edge">
-      <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:py-24">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
         {/* Section header */}
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">

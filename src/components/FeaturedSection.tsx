@@ -115,7 +115,7 @@ const FeaturedSectionContent = async () => {
     // so every section's content lines up. The id is a scroll anchor;
     // scroll-mt-24 keeps the sticky navbar clear of the heading.
     <section id="featured" className="scroll-mt-24">
-      <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:py-24">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
         {/* Section header — same eyebrow/heading style as Categories */}
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">

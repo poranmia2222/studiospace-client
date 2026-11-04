@@ -68,7 +68,7 @@ const AboutUs = () => {
     <section id="about-us" className="scroll-mt-24 border-t border-edge">
       {/* Block 1 — OUR STORY: text left, photo right on desktop
                  (stacks vertically on mobile). */}
-      <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:py-24">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
             <p className={EYEBROW_CLASSES}>Our Story</p>
@@ -107,7 +107,7 @@ const AboutUs = () => {
       {/* Block 2 — MISSION & VISION: two cards side by side from sm up.
           bg-surface/50 alternates the tint, like HowItWorks above. */}
       <div className="border-t border-edge bg-surface/50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:py-24">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
           <div className="grid gap-6 sm:grid-cols-2">
             {VALUES.map((value) => (
               <article key={value.title} className={CARD_CLASSES}>
@@ -125,7 +125,7 @@ const AboutUs = () => {
       {/* Block 3 — WHY CHOOSE: four cards, grid goes
           1 column (mobile) → 2 (sm) → 4 (lg). */}
       <div className="border-t border-edge">
-        <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:py-24">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
           <div className="mx-auto max-w-2xl text-center">
             <p className={EYEBROW_CLASSES}>Why StudioSpace</p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">

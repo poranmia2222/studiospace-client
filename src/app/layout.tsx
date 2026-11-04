@@ -15,7 +15,7 @@
  *   exported from a Server Component (this file has no interactivity).
  */
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -39,6 +39,20 @@ export const metadata: Metadata = {
   title: "StudioSpace",
   description:
     "Peer-to-peer creative workspace & production studio sharing platform",
+    icons: {
+    icon: "/favicon.svg",
+  },
+};
+
+/**
+ * Explicit mobile viewport: phones render the layout at the device's
+ * real CSS width instead of a scaled-out 980px "desktop" canvas.
+ * (Next.js injects a default viewport meta, but stating it here keeps the
+ * guarantee explicit and lets us control the zoom behavior.)
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

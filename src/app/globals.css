@@ -94,4 +94,9 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  /* Safety net on phones: none of the decorative glows (Banner, auth pages)
+     or overhanging carousel cards can start horizontal scrolling. Content
+     that genuinely overflows (carousel tracks, thumbnail strips) still
+     scrolls inside their own overflow containers. */
+  overflow-x: clip;
 }

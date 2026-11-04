@@ -98,7 +98,7 @@ const FeaturedCarousel = ({ studios }: { studios: Studio[] }) => {
           <li
             key={studio._id ?? `${studio.title}-${index}`}
             data-slot="carousel-item"
-            className="h-full w-[86%] shrink-0 snap-start sm:w-[46%] lg:w-[31.5%]"
+            className="flex w-[86%] shrink-0 snap-start sm:w-[46%] lg:w-[31.5%]"
             aria-roledescription="slide"
             aria-label={`${index + 1} of ${studios.length}`}
           >

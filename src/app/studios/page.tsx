@@ -231,7 +231,7 @@ const StudiosPage = ({
   searchParams: Promise<Params>;
 }) => {
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 py-20">
+    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 sm:py-20">
       {/* Section header (same pattern as the homepage sections) */}
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
